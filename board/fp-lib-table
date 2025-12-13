@@ -1,0 +1,9 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "DF40HC30100DS04V51")(type "KiCad")(uri "${KIPRJMOD}/DF40HC30100DS04V/DF40HC30100DS04V51.pretty")(options "")(descr ""))
+  (lib (name "Grove")(type "KiCad")(uri "${KIPRJMOD}/Grove.pretty")(options "")(descr ""))
+  (lib (name "LSF0108PWR")(type "KiCad")(uri "${KIPRJMOD}/LSF0108PWR/LSF0108PWR.pretty")(options "")(descr ""))
+  (lib (name "MSD-4-A")(type "KiCad")(uri "${KIPRJMOD}/MSD-4-A/MSD-4-A.pretty")(options "")(descr ""))
+  (lib (name "LCD-Flex")(type "KiCad")(uri "${KIPRJMOD}/LCD-Flex.pretty")(options "")(descr ""))
+  (lib (name "spresense")(type "KiCad")(uri "${KIPRJMOD}/spresense.pretty")(options "")(descr ""))
+)

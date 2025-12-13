@@ -1,0 +1,14 @@
+# Class
+SprReceiverBLE		KEYWORD1
+
+# Function
+begin			KEYWORD2
+loop			KEYWORD2 
+onConnect		KEYWORD2
+onDisconnect	KEYWORD2
+onLost			KEYWORD2
+onST			KEYWORD2
+onTH			KEYWORD2
+
+t_disconnect	KEYWORD3
+t_lost			KEYWORD3

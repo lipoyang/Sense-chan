@@ -1,0 +1,20 @@
+[env:m5stack-nanoc6]
+#platform = espressif32@6.6.0
+platform = https://github.com/platformio/platform-espressif32.git
+board = m5stack-nanoc6
+framework = arduino
+platform_packages =
+	platformio/framework-arduinoespressif32 @ https://github.com/espressif/arduino-esp32.git#3.0.7
+	platformio/framework-arduinoespressif32-libs @ https://github.com/espressif/esp32-arduino-libs.git#idf-release/v5.1
+#    platformio/framework-arduinoespressif32 @ https://github.com/espressif/arduino-esp32.git#idf-release/v5.1
+#    platformio/framework-arduinoespressif32-libs @ https://github.com/espressif/esp32-arduino-libs.git#idf-release/v5.1
+
+#board_build.partitions = default.csv
+#lib_deps = ${env.lib_deps} 
+
+#extra_scripts = pre:custon_hwids.py
+#board_build.arduino.upstream_packages = no
+
+build_flags =
+    -DARDUINO_USB_CDC_ON_BOOT=1
+   -DARDUINO_USB_MODE=1
