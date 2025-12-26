@@ -16,8 +16,8 @@
 #endif
 
 // シリアルポートのピン定義 (Groveコネクタ)
-#define PIN_RX 1
-#define PIN_TX 2
+#define PIN_RX 2
+#define PIN_TX 1
 
 // Nordic UART Service (NUS) のUUID
 #define SERVICE_UUID  "6E400001-B5A3-F393-E0A9-E50E24DCCA9E"
