@@ -1,10 +1,11 @@
 #pragma once
+#include <Arduino.h>
 
 // BLEラジコン受信器
 class SprReceiverBLE
 {
 public:
-    void begin();
+    void begin(Stream &serial);
     void loop();
 
     void (*onConnect)();

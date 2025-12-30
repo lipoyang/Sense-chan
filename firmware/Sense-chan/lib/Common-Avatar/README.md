@@ -6,3 +6,5 @@
 - Common-Avatar is depend on FreeRTOS or NuttX(SPRESENSE).
 - You must define your display device I/F.
 - For more details, see the document of M5Stack-Avatar.
+
+解説記事 → [M5Stack-AvatarをSPRESENSEに移植 #Spresense - Qiita](https://qiita.com/lipoyang/items/3e23cdb0cf67386d7ea9)

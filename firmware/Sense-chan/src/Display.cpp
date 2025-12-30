@@ -1,24 +1,22 @@
 #include <LovyanGFX.h>
 #include <Display.h>
 
-// ピン割り当て (仮)
+// ピン割り当て
 #define TFT_MISO      -1 // 接続しない
-#define TFT_MOSI      10
-#define TFT_SCLK      8
-#define TFT_CS        7
-#define TFT_DC        6
-#define TFT_RST       5
-#define TFT_BL        4
-#define UART1_RX      3
-#define UART1_TX      2
+#define TFT_MOSI      11
+#define TFT_SCLK      13
+#define TFT_CS        10
+#define TFT_DC        8
+#define TFT_RST       7
+#define TFT_BL        9
 
-// 画面デバイスの定義 (仮)
+// 画面デバイスの定義
 class MyLGFX : public lgfx::LGFX_Device
 {
-  //lgfx::Panel_ST7789  _panel_instance;
-  lgfx::Panel_ILI9341 _panel_instance;
+  lgfx::Panel_ST7789  _panel_instance;
+//lgfx::Panel_ILI9341 _panel_instance;
   lgfx::Bus_SPI       _bus_instance;
-//  lgfx::Light_PWM     _light_instance;
+//lgfx::Light_PWM     _light_instance;
 
 public:
   MyLGFX(void)
@@ -26,7 +24,7 @@ public:
     { // SPIバスの設定
       auto cfg = _bus_instance.config();
 
-      cfg.spi_port = 2;           // SPRESENSEのSPIポート番号
+      cfg.spi_port = 4;          // SPRESENSEのSPIポート番号
       cfg.spi_mode = 3;          // SPI通信モード (0 ~ 3)
       cfg.freq_write = 40000000; // 送信時のSPIクロック
       cfg.freq_read = 20000000;  // 受信時のSPIクロック

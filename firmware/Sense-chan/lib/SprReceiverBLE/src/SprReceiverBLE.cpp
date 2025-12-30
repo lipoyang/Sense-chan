@@ -103,12 +103,12 @@ static void onReceived(char* buff)
 }
 
 // 初期化
-void SprReceiverBLE::begin()
+void SprReceiverBLE::begin(Stream &serial)
 {
   receiver = this;
 
   // シリアルコマンド受信の初期化
-  serialCom.begin(Serial2, 115200, onReceived);
+  serialCom.begin(serial, onReceived);
 }
 
 // メインループ

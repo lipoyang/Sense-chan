@@ -15,14 +15,12 @@
 // serial: シリアルポート
 // baud: ボーレート
 // onReceived: 受信ハンドラ
-void SerialCom::begin(HardwareSerial& serial, int baud, void (*onReceived)(char*))
+void SerialCom::begin(Stream & serial, void (*onReceived)(char*))
 {
     this->serial     = &serial;
     this->onReceived = onReceived;
     this->state      = STATE_READY;
     this->ptr        = 0;
-    
-    this->serial->begin(115200);
 }
 
 

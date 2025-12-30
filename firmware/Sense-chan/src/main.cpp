@@ -1,17 +1,26 @@
 #include <Arduino.h>
 #include <SenseChanFace.h>
+#include <SoftwareSerial.h>
 #include <SprReceiverBLE.h>
 #include <Dynamixel2Arduino.h>
 
 using namespace m5avatar;
 
+// ソフトウェアシリアルのピン
+#define PIN_RX 2
+#define PIN_TX 4
+SoftwareSerial softSerial(PIN_RX, PIN_TX);
+
+// バックライト制御ピン
+#define TFT_BL        9
+
 // 顔表示オブジェクト
 SenseChanFace face;
 
 // DYNAMIXEL設定
-#define DXL_SERIAL   Serial1
+#define DXL_SERIAL   Serial2
 #define DEBUG_SERIAL Serial
-const int DXL_DIR_PIN = 2; // DYNAMIXEL Shield DIR PIN
+const int DXL_DIR_PIN = 5; // DYNAMIXEL Shield DIR PIN
 const uint8_t DXL_ID_L = 1;
 const uint8_t DXL_ID_R = 2;
 const float DXL_PROTOCOL_VERSION = 2.0;
@@ -89,18 +98,22 @@ void setup()
   pinMode(LED3, OUTPUT);
   
   // BLEラジコン受信器の初期化
+  softSerial.begin(19200);
   receiver.onConnect = onConnect;
   receiver.onDisconnect = onDisconnect;
   receiver.onLost = onLost;
   receiver.onTH = onTH;
   receiver.onST = onST;
-  receiver.begin();
+  receiver.begin(softSerial);
 
   //M5.begin();
   Display.begin();
   Display.setRotation(1);     // 画面回転(横向き)
   //Display.setBrightness(255); // バックライト100%(全点灯)
   Display.fillScreen(TFT_BLACK);
+
+  pinMode(TFT_BL, OUTPUT);
+  digitalWrite(TFT_BL, HIGH); // バックライトON
 
   face.begin(); 
 

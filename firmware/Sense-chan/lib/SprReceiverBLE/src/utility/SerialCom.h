@@ -8,12 +8,12 @@
 class SerialCom
 {
 public:
-    void begin(HardwareSerial& serial, int baud, void (*onReceived)(char*));
+    void begin(Stream & serial, void (*onReceived)(char*));
     void loop(void);
 
 private:
     // シリアルポート
-    HardwareSerial* serial;
+    Stream * serial;
     // 受信状態
     int state;
     // 受信バッファ
