@@ -9,8 +9,8 @@ void SenseChanFace::begin()
     // アバターの初期化
     avatar.init();
 //  avatar.addTask(task_servo, "servo");
-//    avatar.setSpeechFont(&fonts::efontJA_16);
-//    avatar.setSpeechText("こんにちは");
+    avatar.setSpeechFont(&fonts::efontJA_16);
+    avatar.setSpeechText("こんにちは");
     delay(2000);
     avatar.setSpeechText("");
 }

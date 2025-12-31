@@ -104,9 +104,6 @@ void setup()
   if (ret < 0) {
     errorLoop(2);
   }
-  uint32_t dummy = 0;
-  MP.Send(MSGID_BEGUN, dummy, MAINCORE_ID);
-  MP.RecvTimeout(MP_RECV_POLLING);
 
   // BLEラジコン受信器の初期化
   softSerial.begin(19200);
@@ -116,6 +113,11 @@ void setup()
   receiver.onTH = onTH;
   receiver.onST = onST;
   receiver.begin(softSerial);
+
+  // 初期化完了をメインコアに知らせる
+  uint32_t dummy = 0;
+  MP.Send(MSGID_BEGUN, dummy, MAINCORE_ID);
+  MP.RecvTimeout(MP_RECV_POLLING);
 }
 
 // メインループ
