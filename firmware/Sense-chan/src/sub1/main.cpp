@@ -76,6 +76,10 @@ void loop()
   // メッセージデータ
   typedef struct {
     uint32_t expression;
+  } S_BaseExpression;
+
+  typedef struct {
+    uint32_t expression;
     uint32_t duration_ms;
   } S_Expression;
 
@@ -85,9 +89,9 @@ void loop()
   } S_SpeechText;
 
   typedef union {
+    S_BaseExpression baseExpression;
     S_Expression expression;
     S_SpeechText speechText;
-    uint32_t     baseExpression;
   } MsgData;
   MsgData *msgdata;
 
@@ -96,7 +100,7 @@ void loop()
   switch(ret){
     case MSGID_SET_BASE_EXPRESSION:
       face.setBaseExpression(
-          (m5avatar::Expression)(msgdata->baseExpression));
+          (m5avatar::Expression)(msgdata->baseExpression.expression));
       break;
     case MSGID_SET_EXPRESSION:
       face.setExpression(

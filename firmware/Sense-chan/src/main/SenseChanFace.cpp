@@ -33,7 +33,11 @@ void SenseChanFace::begin()
 void SenseChanFace::setBaseExpression(Expression expression)
 {
     // メッセージ送信
-    MP.Send(MSGID_SET_BASE_EXPRESSION, (uint32_t)expression, SUBCORE_LCD);
+    static struct {
+        uint32_t expression;
+    } msgdata;
+    msgdata.expression = (uint32_t)expression;
+    MP.Send(MSGID_SET_BASE_EXPRESSION, &msgdata, SUBCORE_LCD);
 }
 
 // スタックチャンの表情を設定
