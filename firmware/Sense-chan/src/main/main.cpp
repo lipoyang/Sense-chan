@@ -1,18 +1,17 @@
+#ifdef SUBCORE
+#error "Core selection is wrong!!"
+#endif
+
 #include <Arduino.h>
 #include "SenseChanFace.h"
 #include <SoftwareSerial.h>
 #include <SprReceiverBLE.h>
 #include <Dynamixel2Arduino.h>
 
-using namespace m5avatar;
-
 // ソフトウェアシリアルのピン
 #define PIN_RX 2
 #define PIN_TX 4
 SoftwareSerial softSerial(PIN_RX, PIN_TX);
-
-// バックライト制御ピン
-#define TFT_BL        9
 
 // 顔表示オブジェクト
 SenseChanFace face;
@@ -106,17 +105,10 @@ void setup()
   receiver.onST = onST;
   receiver.begin(softSerial);
 
-  //M5.begin();
-  Display.begin();
-  Display.setRotation(1);     // 画面回転(横向き)
-  //Display.setBrightness(255); // バックライト100%(全点灯)
-  Display.fillScreen(TFT_BLACK);
-
-  pinMode(TFT_BL, OUTPUT);
-  digitalWrite(TFT_BL, HIGH); // バックライトON
-
+  // 顔の初期化
   face.begin(); 
 
+  // DYNAMIXELシリアルサーボの初期化
   dxl.begin(57600);
   dxl.setPortProtocolVersion(DXL_PROTOCOL_VERSION);
   dxl.ping(DXL_ID_L);
