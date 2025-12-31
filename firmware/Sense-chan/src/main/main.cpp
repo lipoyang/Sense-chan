@@ -7,20 +7,20 @@
 #include "SenseChanFace.h"
 #include "BleReceiver.h"
 
-// 顔表示器
+// スタックチャンの顔表示器
 SenseChanFace face;
 
 // BLEラジコン受信器
 BleReceiver receiver;
 
 // DYNAMIXEL設定
-#define DXL_SERIAL   Serial2
-const int DXL_DIR_PIN = 5; // DYNAMIXEL Shield DIR PIN
-const uint8_t DXL_ID_L = 1;
-const uint8_t DXL_ID_R = 2;
-const float DXL_PROTOCOL_VERSION = 2.0;
+#define DXL_SERIAL   Serial2  // シリアルポート
+const int DXL_DIR_PIN = 5;    // 半二重通信の方向制御ピン
+const uint8_t DXL_ID_L = 1;   // 左モータID
+const uint8_t DXL_ID_R = 2;   // 右モータID
+const float DXL_PROTOCOL_VERSION = 2.0; // プロトコルバージョン
 Dynamixel2Arduino dxl(DXL_SERIAL, DXL_DIR_PIN);
-using namespace ControlTableItem; //This namespace is required to use Control table item names
+using namespace ControlTableItem;
 
 // BLEラジコン接続時
 void onConnect()
@@ -60,7 +60,7 @@ void setup()
   receiver.onReceive = onReceive;
   receiver.begin();
 
-  // 顔の初期化
+  // スタックチャンの顔の初期化
   face.begin(); 
 
   // DYNAMIXELシリアルサーボの初期化

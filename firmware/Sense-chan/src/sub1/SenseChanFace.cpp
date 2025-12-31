@@ -3,7 +3,7 @@
 using namespace m5avatar;
 static Avatar avatar;
 
-// スタックチャン頭部の初期化
+// スタックチャンの顔表示の初期化
 void SenseChanFace::begin()
 {
     // アバターの初期化

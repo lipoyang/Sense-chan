@@ -2,6 +2,7 @@
 
 #include <Avatar.h>
 
+// スタックチャンの顔表示器
 class SenseChanFace
 {
 public:

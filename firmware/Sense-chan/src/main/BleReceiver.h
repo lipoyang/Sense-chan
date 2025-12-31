@@ -1,5 +1,6 @@
 #pragma once
 
+// BLEラジコン受信器
 class BleReceiver
 {
 public:

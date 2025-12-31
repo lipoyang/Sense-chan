@@ -10,6 +10,9 @@
 #define TFT_RST       7
 #define TFT_BL        9
 
+// SPIバス番号
+#define TFT_SPI       4 // SPI4 (= SPI)
+
 // 画面デバイスの定義
 class MyLGFX : public lgfx::LGFX_Device
 {
@@ -24,7 +27,7 @@ public:
     { // SPIバスの設定
       auto cfg = _bus_instance.config();
 
-      cfg.spi_port = 4;          // SPRESENSEのSPIポート番号
+      cfg.spi_port = TFT_SPI;    // SPRESENSEのSPIポート番号
       cfg.spi_mode = 3;          // SPI通信モード (0 ~ 3)
       cfg.freq_write = 40000000; // 送信時のSPIクロック
       cfg.freq_read = 20000000;  // 受信時のSPIクロック

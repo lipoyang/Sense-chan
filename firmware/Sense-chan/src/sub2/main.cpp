@@ -41,8 +41,8 @@ void errorLoop(int num)
   }
 }
 
-// モーター制御関数
-void ctrl_motor()
+// プロポメッセージをメインコアへ送る
+void propo_massage()
 {
   // メッセージデータ
   static struct {
@@ -50,9 +50,8 @@ void ctrl_motor()
       int32_t r;
   } msgdata;
 
-
-  msgdata.l = (int32_t)(g_fb + g_lr/2);
-  msgdata.r = (int32_t)(g_fb - g_lr/2);
+  msgdata.l = (int32_t)(g_fb - g_lr/2);
+  msgdata.r = (int32_t)(g_fb + g_lr/2);
   msgdata.l /= 2;
   msgdata.r /= 2;
 
@@ -78,7 +77,7 @@ void onLost()
 {
   g_fb = 0;
   g_lr = 0;
-  ctrl_motor();
+  propo_massage();
 }
 
 // スロットルコマンド受信時
@@ -86,7 +85,7 @@ void onLost()
 void onTH(int th)
 {
   g_fb = th;
-  ctrl_motor();
+  propo_massage();
 }
 
 // ステアリングコマンド受信時
@@ -94,7 +93,7 @@ void onTH(int th)
 void onST(int st)
 {
   g_lr = st;
-  ctrl_motor();
+  propo_massage();
 }
 
 // 初期化

@@ -11,13 +11,13 @@ const int8_t MSGID_SET_EXPRESSION = 3;
 const int8_t MSGID_SET_SPEECH_TEXT = 4;
 const int8_t MSGID_CLEAR_SPEECH_TEXT = 5;
 
-// スタックチャン頭部の初期化
+// スタックチャンの顔表示の初期化
 void SenseChanFace::begin()
 {
     // LCD表示処理用のサブコア起動
     int ret = MP.begin(SUBCORE_LCD);
     if (ret < 0) {
-        Serial.printf("MP.begin error = %d\n", ret);
+        Serial.printf("SenseChanFace: MP.begin error = %d\n", ret);
     }
     // サブコアの起動完了待ち
     MP.RecvTimeout(MP_RECV_BLOCKING);
@@ -25,7 +25,7 @@ void SenseChanFace::begin()
     int *dummy;
     MP.Recv(&msgid, dummy, SUBCORE_LCD);
     if (msgid != MSGID_BEGUN) {
-        Serial.printf("MP.Recv error: no BEGUN message %d\n", msgid);
+        Serial.printf("SenseChanFace: MP.Recv error: no BEGUN message %d\n", msgid);
     }
 }
 

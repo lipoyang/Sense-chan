@@ -1,8 +1,10 @@
 #pragma once
 #include <stdint.h>
 
+// 表情
 enum class Expression { Happy, Angry, Sad, Doubt, Sleepy, Neutral };
 
+// スタックチャンの顔表示器
 class SenseChanFace
 {
 public:

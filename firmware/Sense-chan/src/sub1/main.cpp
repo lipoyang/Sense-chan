@@ -53,7 +53,7 @@ void setup()
 
   // LCD初期化
   Display.begin();
-  Display.setRotation(1);     // 画面回転(横向き)
+  Display.setRotation(3);     // 画面回転(横向き,反転)
   //Display.setBrightness(255); // バックライト100%(全点灯)
   Display.fillScreen(TFT_BLACK);
 
@@ -87,24 +87,24 @@ void loop()
     S_SpeechText speechText;
     uint32_t     baseExpression;
   } MsgData;
-  MsgData msgdata;
+  MsgData *msgdata;
 
   // メッセージ受信
   int ret = MP.Recv(&msgid, &msgdata);
   switch(ret){
     case MSGID_SET_BASE_EXPRESSION:
       face.setBaseExpression(
-          (m5avatar::Expression)(msgdata.baseExpression));
+          (m5avatar::Expression)(msgdata->baseExpression));
       break;
     case MSGID_SET_EXPRESSION:
       face.setExpression(
-          (m5avatar::Expression)(msgdata.expression.expression),
-          (int)(msgdata.expression.duration_ms));
+          (m5avatar::Expression)(msgdata->expression.expression),
+          (int)(msgdata->expression.duration_ms));
       break;
     case MSGID_SET_SPEECH_TEXT:
       face.setSpeachText(
-          msgdata.speechText.text,
-          (int)(msgdata.speechText.duration_ms));
+          msgdata->speechText.text,
+          (int)(msgdata->speechText.duration_ms));
       break;
     case MSGID_CLEAR_SPEECH_TEXT:
       face.clearSpeachText();
