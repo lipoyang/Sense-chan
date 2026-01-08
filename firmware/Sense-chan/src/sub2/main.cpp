@@ -44,16 +44,24 @@ void errorLoop(int num)
 // プロポメッセージをメインコアへ送る
 void propo_massage()
 {
+  int32_t l = (int32_t)(g_fb - g_lr/2);
+  int32_t r = (int32_t)(g_fb + g_lr/2);
+  // (TODO) 速すぎるので調整
+  l /= 4;
+  r /= 4;
+  // -100~+100にクリップ
+  if (l < -100) l = -100;
+  if (l > +100) l = +100;
+  if (r < -100) r = -100;
+  if (r > +100) r = +100;
+
   // メッセージデータ
   static struct {
       int32_t l;
       int32_t r;
   } msgdata;
-
-  msgdata.l = (int32_t)(g_fb - g_lr/2);
-  msgdata.r = (int32_t)(g_fb + g_lr/2);
-  msgdata.l /= 2;
-  msgdata.r /= 2;
+  msgdata.l = l;
+  msgdata.r = r;
 
   MP.Send(MSGID_RECEIVE, &msgdata, MAINCORE_ID);
 }
