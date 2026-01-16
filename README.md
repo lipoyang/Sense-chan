@@ -2,15 +2,11 @@
 ｾﾝｽﾁｬﾝはｽﾀｯｸﾁｬﾝ派生のSPRESENSEマイコン搭載ロボットです。  
 SPRESENSE搭載のロボット用基板と対向2輪型ロボットおよびそのソフトウェアで構成されます。
 
-<!--
-![写真](./docs/images/photo.jpg)
--->
+![写真](./photo.jpg)
 
 ## 解説
-elchikaにて解説記事を準備中
-<!--
-* [センスチャン ～ ｽﾀｯｸﾁｬﾝ派生のSPRESENSE搭載ロボット ～ by lipoyang | elchika](https://elchika.com/article/c5d4bbd1-0e7f-4fa6-907b-d6d020c664f9/draft/edit/)
--->
+
+* [センスチャン ～ ｽﾀｯｸﾁｬﾝ派生のSPRESENSE搭載ロボット ～ by lipoyang | elchika](https://elchika.com/article/c5d4bbd1-0e7f-4fa6-907b-d6d020c664f9)
 
 ## ファイル
 * [firmware](./firmware/) : ファームウェアのソースコード
