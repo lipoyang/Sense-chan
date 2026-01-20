@@ -22,11 +22,13 @@ void SenseChanFace::begin()
     // サブコアの起動完了待ち
     MP.RecvTimeout(MP_RECV_BLOCKING);
     int8_t msgid;
-    int *dummy;
-    MP.Recv(&msgid, dummy, SUBCORE_LCD);
+    uint32_t dummy = 0;
+    MP.Recv(&msgid, &dummy, SUBCORE_LCD);
     if (msgid != MSGID_BEGUN) {
         Serial.printf("SenseChanFace: MP.Recv error: no BEGUN message %d\n", msgid);
     }
+    // 受信をポーリングに変更
+    MP.RecvTimeout(MP_RECV_POLLING);
 }
 
 // スタックチャンの表情を設定

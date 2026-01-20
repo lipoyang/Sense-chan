@@ -6,12 +6,16 @@
 #include <Dynamixel2Arduino.h>
 #include "SenseChanFace.h"
 #include "BleReceiver.h"
+#include "BatteryCheck.h"
 
 // スタックチャンの顔表示器
 SenseChanFace face;
 
 // BLEラジコン受信器
 BleReceiver receiver;
+
+// バッテリー電圧監視
+BatteryCheck batteryCheck;
 
 // DYNAMIXEL設定
 #define DXL_SERIAL   Serial2  // シリアルポート
@@ -50,6 +54,20 @@ void onReceive(int l, int r)
   dxl.setGoalVelocity(DXL_ID_R, -r, UNIT_PERCENT);
 }
 
+// バッテリー電圧監視コールバック
+void onBatteryCheck(float voltage, bool wasLowBattery)
+{
+  Serial.printf("Battery Voltage: %.2f V\n", voltage);
+
+  if(voltage < LOW_BATTERY) {
+    face.setExpression(Expression::Sad, 2000);
+    face.setSpeachText("電圧が下がってるよ", 2000);
+  }else if(wasLowBattery) {
+    face.setExpression(Expression::Neutral, 2000);
+    face.clearSpeachText();
+  }
+}
+
 // 初期化
 void setup()
 {
@@ -82,6 +100,10 @@ void setup()
   dxl.setOperatingMode(DXL_ID_R, OP_VELOCITY);
   dxl.torqueOn(DXL_ID_L);
   dxl.torqueOn(DXL_ID_R);
+
+  // バッテリー電圧監視の初期化
+  batteryCheck.begin();
+  batteryCheck.onBatteryCheck = onBatteryCheck;
 }
 
 // メインループ
@@ -89,4 +111,7 @@ void loop()
 {
   // BLEラジコン受信器のメインループ処理
   receiver.loop();
+
+  // バッテリー電圧監視のメインループ処理
+  batteryCheck.loop();
 }

@@ -21,8 +21,8 @@ void BleReceiver::begin()
     // サブコアの起動完了待ち
     MP.RecvTimeout(MP_RECV_BLOCKING);
     int8_t msgid;
-    int *dummy;
-    MP.Recv(&msgid, dummy, SUBCORE_BLE);
+    uint32_t dummy = 0;
+    MP.Recv(&msgid, &dummy, SUBCORE_BLE);
     if (msgid != MSGID_BEGUN) {
         Serial.printf("BleReceiver: MP.Recv error: no BEGUN message %d\n", msgid);
     }
@@ -47,12 +47,12 @@ void BleReceiver::loop()
     MsgData *msgdata;
 
     int ret = MP.Recv(&msgid, &msgdata, SUBCORE_BLE);
-    if(ret < 0){
+    if(ret == -EAGAIN) {
+        return; // 受信無し
+    }
+    if(ret < 0) {
         Serial.printf("BleReceiver: MP.Recv error %d\n", ret);
         return;
-    }
-    if(ret == 0){
-        return; // 受信無し
     }
     
     switch (ret) {
