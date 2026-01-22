@@ -1,6 +1,9 @@
 #include "SenseChanFace.h"
 #include <MP.h>
 
+// バックライト制御ピン
+#define TFT_BL        9
+
 // LCD表示処理用サブコアID
 const int SUBCORE_LCD = 1;
 
@@ -14,6 +17,10 @@ const int8_t MSGID_CLEAR_SPEECH_TEXT = 5;
 // スタックチャンの顔表示の初期化
 void SenseChanFace::begin()
 {
+    // バックライトOFF
+    pinMode(TFT_BL, OUTPUT);
+    digitalWrite(TFT_BL, LOW);
+
     // LCD表示処理用のサブコア起動
     int ret = MP.begin(SUBCORE_LCD);
     if (ret < 0) {
