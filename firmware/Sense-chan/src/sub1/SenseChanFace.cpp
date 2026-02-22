@@ -2,13 +2,36 @@
 
 using namespace m5avatar;
 static Avatar avatar;
+static SenseChanFace *face;
+
+// 微動用コールバック
+static void* task_servo(void *args)
+{
+  float gazeX, gazeY;
+  DriveContext *ctx = (DriveContext *)args;
+  Avatar *avatar = ctx->getAvatar();
+  for (;;)
+  {
+    if(face->isMicroMotionEnabled())
+    {
+      avatar->getGaze(&gazeY, &gazeX);
+
+      if(face->onMicroMotion != nullptr) {
+        face->onMicroMotion(gazeX, gazeY);
+      }
+    }
+    delay(50);
+  }
+}
 
 // スタックチャンの顔表示の初期化
 void SenseChanFace::begin()
 {
+    face = this;
+
     // アバターの初期化
     avatar.init();
-//  avatar.addTask(task_servo, "servo");
+    avatar.addTask(task_servo, "servo");  // 微動用コールバックの設定
     avatar.setSpeechFont(&fonts::efontJA_16);
     avatar.setSpeechText("こんにちは");
     delay(2000);

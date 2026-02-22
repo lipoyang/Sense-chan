@@ -20,6 +20,9 @@ const int8_t MSGID_SET_BASE_EXPRESSION = 2;
 const int8_t MSGID_SET_EXPRESSION = 3;
 const int8_t MSGID_SET_SPEECH_TEXT = 4;
 const int8_t MSGID_CLEAR_SPEECH_TEXT = 5;
+const int8_t MSGID_MICRO_MOTION_ENABLE = 6;
+const int8_t MSGID_MICRO_MOTION_DISABLE = 7;
+const int8_t MSGID_MICRO_MOTION = 8;
 
 // 顔表示オブジェクト
 SenseChanFace face;
@@ -37,6 +40,20 @@ void errorLoop(int num)
     }
     delay(1000);
   }
+}
+
+// 微動用コールバック
+void onMicroMotion(float x, float y)
+{
+    // メッセージ送信
+    static struct {
+        float x;
+        float y;
+    } msgdata;
+    msgdata.x = x;
+    msgdata.y = y;
+
+    MP.Send(MSGID_MICRO_MOTION, &msgdata);
 }
 
 // 初期化
@@ -59,6 +76,7 @@ void setup()
   digitalWrite(TFT_BL, HIGH);
 
   // 顔の初期化
+  face.onMicroMotion = onMicroMotion;  // 微動用コールバックの設定
   face.begin(); 
 
   // 初期化完了をメインコアに知らせる
@@ -114,6 +132,12 @@ void loop()
       break;
     case MSGID_CLEAR_SPEECH_TEXT:
       face.clearSpeachText();
+      break;
+    case MSGID_MICRO_MOTION_ENABLE:
+      face.setMicroMotion(true);
+      break;
+    case MSGID_MICRO_MOTION_DISABLE:
+      face.setMicroMotion(false);
       break;
   }
 

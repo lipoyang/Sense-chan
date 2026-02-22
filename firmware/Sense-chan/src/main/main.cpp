@@ -30,6 +30,7 @@ using namespace ControlTableItem;
 void onConnect()
 {
   Serial.println("Connected!");
+  face.setMicroMotion(false);
   face.setBaseExpression(Expression::Neutral);
   face.setExpression(Expression::Happy, 2000);
   face.setSpeachText("プロポ接続したよ", 2000);
@@ -39,9 +40,10 @@ void onConnect()
 void onDisconnect()
 {
   Serial.println("Disconnected!");
-  face.setBaseExpression(Expression::Sleepy);
+  face.setBaseExpression(Expression::Neutral); // Sleepy);
   face.setExpression(Expression::Neutral, 2000);
   face.setSpeachText("プロポ切断したよ", 2000);
+  face.setMicroMotion(true);
 }
 
 // BLEラジコン受信時
@@ -68,6 +70,12 @@ void onBatteryCheck(float voltage, bool wasLowBattery)
   }
 }
 
+// スタックチャンの微動コールバック
+void onMicroMotion(float x, float y)
+{
+    Serial.printf("MicroMotion: x=%.2f y=%.2f\n", x, y);
+}
+
 // 初期化
 void setup()
 {
@@ -84,10 +92,12 @@ void setup()
   receiver.onReceive = onReceive;
   receiver.begin();
 
-  // スタックチャンの顔の初期化 (居眠り状態に)
+  // スタックチャンの顔の初期化
+  face.onMicroMotion = onMicroMotion;
   face.begin();
-  face.setBaseExpression(Expression::Sleepy);
-  face.setExpression(Expression::Sleepy);
+  face.setBaseExpression(Expression::Neutral); // Sleepy);
+  face.setExpression(Expression::Happy, 2000);
+  face.setMicroMotion(true);
 
   // DYNAMIXELシリアルサーボの初期化
   dxl.begin(57600);
@@ -111,6 +121,9 @@ void loop()
 {
   // BLEラジコン受信器のメインループ処理
   receiver.loop();
+
+  // スタックチャンの顔のメインループ処理
+  face.loop();
 
   // バッテリー電圧監視のメインループ処理
   batteryCheck.loop();

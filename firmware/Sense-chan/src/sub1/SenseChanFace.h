@@ -13,6 +13,10 @@ public:
     void setBaseExpression(m5avatar::Expression expression) {baseExpression = expression;}
     void setSpeachText(const char *text, int duration_ms = 0);
     void clearSpeachText();
+    void setMicroMotion(bool enable) { isMicroMotion = enable; }
+    bool isMicroMotionEnabled() const { return isMicroMotion; }
+
+    void (*onMicroMotion)(float x, float y) = nullptr;
 
 private:
     bool isMicroMotion = false;

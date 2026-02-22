@@ -30,6 +30,7 @@ void BleReceiver::begin()
     MP.RecvTimeout(MP_RECV_POLLING);
 }
 
+// 受信器のメインループ処理
 void BleReceiver::loop()
 {
     // メッセージID

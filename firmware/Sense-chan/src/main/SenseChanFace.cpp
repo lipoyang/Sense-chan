@@ -13,6 +13,9 @@ const int8_t MSGID_SET_BASE_EXPRESSION = 2;
 const int8_t MSGID_SET_EXPRESSION = 3;
 const int8_t MSGID_SET_SPEECH_TEXT = 4;
 const int8_t MSGID_CLEAR_SPEECH_TEXT = 5;
+const int8_t MSGID_MICRO_MOTION_ENABLE = 6;
+const int8_t MSGID_MICRO_MOTION_DISABLE = 7;
+const int8_t MSGID_MICRO_MOTION = 8;
 
 // スタックチャンの顔表示の初期化
 void SenseChanFace::begin()
@@ -36,6 +39,35 @@ void SenseChanFace::begin()
     }
     // 受信をポーリングに変更
     MP.RecvTimeout(MP_RECV_POLLING);
+}
+
+// スタックチャンの顔表示のメインループ処理
+void SenseChanFace::loop()
+{
+    // メッセージID
+    int8_t msgid;
+    // メッセージデータ
+    static struct {
+        float x;
+        float y;
+    } *msgdata;
+
+    int ret = MP.Recv(&msgid, &msgdata, SUBCORE_LCD);
+    if(ret == -EAGAIN) {
+        return; // 受信無し
+    }
+    if(ret < 0) {
+        Serial.printf("SenseChanFace: MP.Recv error %d\n", ret);
+        return;
+    }
+    
+    switch (ret) {
+    case MSGID_MICRO_MOTION:
+      if (onMicroMotion) {
+          onMicroMotion(msgdata->x, msgdata->y);
+      }
+      break;
+    }
 }
 
 // スタックチャンの表情を設定
@@ -86,4 +118,12 @@ void SenseChanFace::clearSpeachText()
     // メッセージ送信
     uint32_t dummy = 0;
     MP.Send(MSGID_CLEAR_SPEECH_TEXT, dummy, SUBCORE_LCD);
+}
+
+// スタックチャンの微動を有効/無効にする
+void SenseChanFace::setMicroMotion(bool enabled) {
+    // メッセージ送信
+    uint32_t dummy = (uint32_t)enabled;
+    int8_t msgid = enabled ? MSGID_MICRO_MOTION_ENABLE : MSGID_MICRO_MOTION_DISABLE;
+    MP.Send(msgid, dummy, SUBCORE_LCD);
 }
