@@ -25,6 +25,7 @@ const uint8_t DXL_ID_R = 2;   // 右モータID
 const float DXL_PROTOCOL_VERSION = 2.0; // プロトコルバージョン
 Dynamixel2Arduino dxl(DXL_SERIAL, DXL_DIR_PIN);
 using namespace ControlTableItem;
+float posOffset[2] = {0.0f, 0.0f}; // 位置オフセット
 
 // BLEラジコン接続時
 void onConnect()
@@ -34,6 +35,14 @@ void onConnect()
   face.setBaseExpression(Expression::Neutral);
   face.setExpression(Expression::Happy, 2000);
   face.setSpeachText("プロポ接続したよ", 2000);
+
+  // DYNAMIXELシリアルサーボを速度制御に変更
+  for(uint8_t id = DXL_ID_L; id <= DXL_ID_R; id++) {
+    dxl.torqueOff(id);
+    dxl.setGoalVelocity(id, 0, UNIT_PERCENT);
+    dxl.setOperatingMode(id, OP_VELOCITY);
+    dxl.torqueOn(id);
+  }
 }
 
 // BLEラジコン切断時
@@ -44,6 +53,16 @@ void onDisconnect()
   face.setExpression(Expression::Neutral, 2000);
   face.setSpeachText("プロポ切断したよ", 2000);
   face.setMicroMotion(true);
+
+  // DYNAMIXELシリアルサーボを位置制御に変更
+  for(uint8_t id = DXL_ID_L; id <= DXL_ID_R; id++) {
+    int index = id - DXL_ID_L;
+    dxl.torqueOff(id);
+    dxl.setOperatingMode(id, OP_POSITION);
+    posOffset[index] = dxl.getPresentPosition(id, UNIT_DEGREE);
+    dxl.setGoalPosition(id, posOffset[index], UNIT_DEGREE);
+    dxl.torqueOn(id);
+  }
 }
 
 // BLEラジコン受信時
@@ -73,7 +92,17 @@ void onBatteryCheck(float voltage, bool wasLowBattery)
 // スタックチャンの微動コールバック
 void onMicroMotion(float x, float y)
 {
-    Serial.printf("MicroMotion: x=%.2f y=%.2f\n", x, y);
+  Serial.printf("MicroMotion: x=%.2f y=%.2f\n", x, y);
+
+  // 目標位置の設定
+  const float Kx = 120.0f;  // 旋回成分の係数 [度]
+  const float Ky = 90.0f;   // 並進成分の係数 [度]
+
+  float dl =  Kx * x + Ky * y;
+  float dr = -Kx * x + Ky * y;
+
+  dxl.setGoalPosition(DXL_ID_L, posOffset[0] + dl, UNIT_DEGREE);
+  dxl.setGoalPosition(DXL_ID_R, posOffset[1] + dr, UNIT_DEGREE);
 }
 
 // 初期化
@@ -99,17 +128,18 @@ void setup()
   face.setExpression(Expression::Happy, 2000);
   face.setMicroMotion(true);
 
-  // DYNAMIXELシリアルサーボの初期化
+  // DYNAMIXELシリアルサーボの初期化 (位置制御)
   dxl.begin(57600);
   dxl.setPortProtocolVersion(DXL_PROTOCOL_VERSION);
-  dxl.ping(DXL_ID_L);
-  dxl.ping(DXL_ID_R);
-  dxl.torqueOff(DXL_ID_L);
-  dxl.torqueOff(DXL_ID_R);
-  dxl.setOperatingMode(DXL_ID_L, OP_VELOCITY);
-  dxl.setOperatingMode(DXL_ID_R, OP_VELOCITY);
-  dxl.torqueOn(DXL_ID_L);
-  dxl.torqueOn(DXL_ID_R);
+  for(uint8_t id = DXL_ID_L; id <= DXL_ID_R; id++) {
+    int index = id - DXL_ID_L;
+    dxl.ping(id);
+    dxl.torqueOff(id);
+    dxl.setOperatingMode(id, OP_POSITION);
+    posOffset[index] = dxl.getPresentPosition(id, UNIT_DEGREE);
+    dxl.setGoalPosition(id, posOffset[index], UNIT_DEGREE);
+    dxl.torqueOn(id);
+  }
 
   // バッテリー電圧監視の初期化
   batteryCheck.begin();
