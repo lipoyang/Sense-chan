@@ -7,6 +7,7 @@
 #include "SenseChanFace.h"
 #include "BleReceiver.h"
 #include "BatteryCheck.h"
+#include "PollingTimer.h"
 
 // スタックチャンの顔表示器
 SenseChanFace face;
@@ -20,12 +21,17 @@ BatteryCheck batteryCheck;
 // DYNAMIXEL設定
 #define DXL_SERIAL   Serial2  // シリアルポート
 const int DXL_DIR_PIN = 5;    // 半二重通信の方向制御ピン
-const uint8_t DXL_ID_L = 1;   // 左モータID
-const uint8_t DXL_ID_R = 2;   // 右モータID
+const uint8_t DXL_ID[2] = {1, 2} ;   // 左右のモータID
 const float DXL_PROTOCOL_VERSION = 2.0; // プロトコルバージョン
 Dynamixel2Arduino dxl(DXL_SERIAL, DXL_DIR_PIN);
 using namespace ControlTableItem;
+
+// モータ制御関連
+IntervalTimer servoTimer;     // 周期タイマ
+int servoMode = OP_POSITION;  // 制御モード
 float posOffset[2] = {0.0f, 0.0f}; // 位置オフセット
+float posTarget[2] = {0.0f, 0.0f}; // 目標値
+float posCurrent[2] = {0.0f, 0.0f}; // 現在値
 
 // BLEラジコン接続時
 void onConnect()
@@ -37,12 +43,14 @@ void onConnect()
   face.setSpeachText("プロポ接続したよ", 2000);
 
   // DYNAMIXELシリアルサーボを速度制御に変更
-  for(uint8_t id = DXL_ID_L; id <= DXL_ID_R; id++) {
+  for(uint8_t i = 0; i < 2; i++) {
+    uint8_t id = DXL_ID[i];
     dxl.torqueOff(id);
     dxl.setGoalVelocity(id, 0, UNIT_PERCENT);
     dxl.setOperatingMode(id, OP_VELOCITY);
     dxl.torqueOn(id);
   }
+  servoMode = OP_VELOCITY;
 }
 
 // BLEラジコン切断時
@@ -55,14 +63,17 @@ void onDisconnect()
   face.setMicroMotion(true);
 
   // DYNAMIXELシリアルサーボを位置制御に変更
-  for(uint8_t id = DXL_ID_L; id <= DXL_ID_R; id++) {
-    int index = id - DXL_ID_L;
+  for(uint8_t i = 0; i < 2; i++) {
+    uint8_t id = DXL_ID[i];
     dxl.torqueOff(id);
     dxl.setOperatingMode(id, OP_POSITION);
-    posOffset[index] = dxl.getPresentPosition(id, UNIT_DEGREE);
-    dxl.setGoalPosition(id, posOffset[index], UNIT_DEGREE);
+    posOffset[i] = dxl.getPresentPosition(id, UNIT_DEGREE);
+    posTarget[i] = 0.0f;
+    posCurrent[i] = 0.0f;
+    dxl.setGoalPosition(id, posOffset[i], UNIT_DEGREE);
     dxl.torqueOn(id);
   }
+  servoMode = OP_POSITION;
 }
 
 // BLEラジコン受信時
@@ -71,8 +82,8 @@ void onReceive(int l, int r)
   Serial.printf("Received: l=%d r=%d\n", l, r);
   // モータの速度制御
   // 対向二輪駆動なので極性に注意
-  dxl.setGoalVelocity(DXL_ID_L, +l, UNIT_PERCENT);
-  dxl.setGoalVelocity(DXL_ID_R, -r, UNIT_PERCENT);
+  dxl.setGoalVelocity(DXL_ID[0], +l, UNIT_PERCENT);
+  dxl.setGoalVelocity(DXL_ID[1], -r, UNIT_PERCENT);
 }
 
 // バッテリー電圧監視コールバック
@@ -98,11 +109,28 @@ void onMicroMotion(float x, float y)
   const float Kx = 120.0f;  // 旋回成分の係数 [度]
   const float Ky = 90.0f;   // 並進成分の係数 [度]
 
-  float dl =  Kx * x + Ky * y;
-  float dr = -Kx * x + Ky * y;
+  posTarget[0] =  Kx * x + Ky * y; // 左
+  posTarget[1] = -Kx * x + Ky * y; // 右
+}
 
-  dxl.setGoalPosition(DXL_ID_L, posOffset[0] + dl, UNIT_DEGREE);
-  dxl.setGoalPosition(DXL_ID_R, posOffset[1] + dr, UNIT_DEGREE);
+// モータ制御
+void servoControl()
+{
+  const float Amax = 10.0f;
+
+  // 位置制御モードか？
+  if(servoMode == OP_POSITION)
+  {
+    for(uint8_t i = 0; i < 2; i++) {
+      uint8_t id = DXL_ID[i];
+
+      float diff = posTarget[i] - posCurrent[i];
+      if (diff >  Amax) diff =  Amax;
+      if (diff < -Amax) diff = -Amax;
+      posCurrent[i] += diff;
+      dxl.setGoalPosition(id, posOffset[i] + posCurrent[i], UNIT_DEGREE);
+    }
+  }
 }
 
 // 初期化
@@ -131,19 +159,25 @@ void setup()
   // DYNAMIXELシリアルサーボの初期化 (位置制御)
   dxl.begin(57600);
   dxl.setPortProtocolVersion(DXL_PROTOCOL_VERSION);
-  for(uint8_t id = DXL_ID_L; id <= DXL_ID_R; id++) {
-    int index = id - DXL_ID_L;
+  for(uint8_t i = 0; i < 2; i++) {
+    uint8_t id = DXL_ID[i];
     dxl.ping(id);
     dxl.torqueOff(id);
     dxl.setOperatingMode(id, OP_POSITION);
-    posOffset[index] = dxl.getPresentPosition(id, UNIT_DEGREE);
-    dxl.setGoalPosition(id, posOffset[index], UNIT_DEGREE);
+    posOffset[i] = dxl.getPresentPosition(id, UNIT_DEGREE);
+    posTarget[i] = 0.0f;
+    posCurrent[i] = 0.0f;
+    dxl.setGoalPosition(id, posOffset[i], UNIT_DEGREE);
     dxl.torqueOn(id);
   }
+  servoMode = OP_POSITION;
 
   // バッテリー電圧監視の初期化
   batteryCheck.begin();
   batteryCheck.onBatteryCheck = onBatteryCheck;
+
+  // モータ制御用タイマ
+  servoTimer.set(20);
 }
 
 // メインループ
@@ -157,4 +191,9 @@ void loop()
 
   // バッテリー電圧監視のメインループ処理
   batteryCheck.loop();
+
+  // モータ制御
+  if(servoTimer.elapsed()) {
+    servoControl();
+  }
 }
