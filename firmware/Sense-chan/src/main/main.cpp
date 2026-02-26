@@ -107,7 +107,7 @@ void onMicroMotion(float x, float y)
 
   // 目標位置の設定
   const float Kx = 120.0f;  // 旋回成分の係数 [度]
-  const float Ky = 90.0f;   // 並進成分の係数 [度]
+  const float Ky = 60.0f;   // 並進成分の係数 [度]
 
   posTarget[0] =  Kx * x + Ky * y; // 左
   posTarget[1] = -Kx * x + Ky * y; // 右
@@ -116,7 +116,7 @@ void onMicroMotion(float x, float y)
 // モータ制御
 void servoControl()
 {
-  const float Amax = 10.0f;
+  const float Amax = 5.0f;
 
   // 位置制御モードか？
   if(servoMode == OP_POSITION)
