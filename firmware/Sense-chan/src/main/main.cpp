@@ -8,6 +8,7 @@
 #include "BleReceiver.h"
 #include "BatteryCheck.h"
 #include "PollingTimer.h"
+#include "SdCard.h"
 
 // スタックチャンの顔表示器
 SenseChanFace face;
@@ -32,6 +33,12 @@ int servoMode = OP_POSITION;  // 制御モード
 float posOffset[2] = {0.0f, 0.0f}; // 位置オフセット
 float posTarget[2] = {0.0f, 0.0f}; // 目標値
 float posCurrent[2] = {0.0f, 0.0f}; // 現在値
+float Kx = 120.0f;  // 旋回成分の係数 [度]
+float Ky = 60.0f;   // 並進成分の係数 [度]
+float Vmax = 5.0f;  // 位置制御の台形制御の最大速度
+
+// SDカード
+SdCard sdCard;
 
 // BLEラジコン接続時
 void onConnect()
@@ -103,11 +110,7 @@ void onBatteryCheck(float voltage, bool wasLowBattery)
 // スタックチャンの微動コールバック
 void onMicroMotion(float x, float y)
 {
-  Serial.printf("MicroMotion: x=%.2f y=%.2f\n", x, y);
-
-  // 目標位置の設定
-  const float Kx = 120.0f;  // 旋回成分の係数 [度]
-  const float Ky = 60.0f;   // 並進成分の係数 [度]
+  // Serial.printf("MicroMotion: x=%.2f y=%.2f\n", x, y);
 
   posTarget[0] =  Kx * x + Ky * y; // 左
   posTarget[1] = -Kx * x + Ky * y; // 右
@@ -116,8 +119,6 @@ void onMicroMotion(float x, float y)
 // モータ制御
 void servoControl()
 {
-  const float Amax = 5.0f;
-
   // 位置制御モードか？
   if(servoMode == OP_POSITION)
   {
@@ -125,8 +126,8 @@ void servoControl()
       uint8_t id = DXL_ID[i];
 
       float diff = posTarget[i] - posCurrent[i];
-      if (diff >  Amax) diff =  Amax;
-      if (diff < -Amax) diff = -Amax;
+      if (diff >  Vmax) diff =  Vmax;
+      if (diff < -Vmax) diff = -Vmax;
       posCurrent[i] += diff;
       dxl.setGoalPosition(id, posOffset[i] + posCurrent[i], UNIT_DEGREE);
     }
@@ -142,6 +143,14 @@ void setup()
   pinMode(LED1, OUTPUT);
   pinMode(LED2, OUTPUT);
   pinMode(LED3, OUTPUT);
+
+  // SDカードの初期化と設定読み込み
+  if(sdCard.begin()){
+    sdCard.load();
+    Kx   = sdCard.Kx;
+    Ky   = sdCard.Ky;
+    Vmax = sdCard.Vmax;
+  }
   
   // BLEラジコン受信器の初期化
   receiver.onConnect = onConnect;
