@@ -93,9 +93,9 @@ bool SdCard::load()
         Serial.println("servoParams not found.");
         return false;
     }
-    float Kx   = params["Kx"]   | 120.0f;
-    float Ky   = params["Ky"]   | 60.0f;
-    float Vmax = params["Vmax"] | 5.0f;
+    Kx   = params["Kx"]   | 120.0f;
+    Ky   = params["Ky"]   | 60.0f;
+    Vmax = params["Vmax"] | 2.0f;
 
     Serial.println("Loaded parameters:");
     Serial.println(Kx);
@@ -107,7 +107,19 @@ bool SdCard::load()
 
 bool SdCard::save()
 {
-    // SDカードにデータを保存する処理を実装
-    // 例: 設定ファイルにKx, Ky, Vmax
-    return true; // 仮の実装
+    // JSON ドキュメント作成
+    StaticJsonDocument<256> doc;
+    JsonObject params = doc.createNestedObject("servoParams");
+    params["Kx"] = Kx;
+    params["Ky"] = Ky;
+    params["Vmax"] = Vmax;
+
+    // SD カードに書き込み
+    SD.remove("/config.json");
+    File file = SD.open("/config.json", FILE_WRITE);
+    if (!file) return false;
+    serializeJson(doc, file);
+    file.close();
+
+    return true; 
 }

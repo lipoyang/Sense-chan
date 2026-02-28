@@ -10,5 +10,5 @@ public:
 
     float Kx = 120.0f;
     float Ky = 60.0f;
-    float Vmax = 5.0f;
+    float Vmax = 2.0f;
 };

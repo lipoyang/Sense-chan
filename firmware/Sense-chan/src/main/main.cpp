@@ -9,6 +9,7 @@
 #include "BatteryCheck.h"
 #include "PollingTimer.h"
 #include "SdCard.h"
+#include "SerialCmd.h"
 
 // スタックチャンの顔表示器
 SenseChanFace face;
@@ -30,15 +31,18 @@ using namespace ControlTableItem;
 // モータ制御関連
 IntervalTimer servoTimer;     // 周期タイマ
 int servoMode = OP_POSITION;  // 制御モード
+bool isSitting = false;       // おすわり中か？
 float posOffset[2] = {0.0f, 0.0f}; // 位置オフセット
 float posTarget[2] = {0.0f, 0.0f}; // 目標値
 float posCurrent[2] = {0.0f, 0.0f}; // 現在値
 float Kx = 120.0f;  // 旋回成分の係数 [度]
 float Ky = 60.0f;   // 並進成分の係数 [度]
-float Vmax = 5.0f;  // 位置制御の台形制御の最大速度
+float Vmax = 2.0f;  // 位置制御の台形制御の最大速度
 
 // SDカード
 SdCard sdCard;
+// USBシリアルコマンド (開発用)
+SerialCmd serialCmd;
 
 // BLEラジコン接続時
 void onConnect()
@@ -96,7 +100,7 @@ void onReceive(int l, int r)
 // バッテリー電圧監視コールバック
 void onBatteryCheck(float voltage, bool wasLowBattery)
 {
-  Serial.printf("Battery Voltage: %.2f V\n", voltage);
+  //Serial.printf("Battery Voltage: %.2f V\n", voltage);
 
   if(voltage < LOW_BATTERY) {
     face.setExpression(Expression::Sad, 2000);
@@ -119,6 +123,8 @@ void onMicroMotion(float x, float y)
 // モータ制御
 void servoControl()
 {
+  if(isSitting) return; // おすわり中は動かない
+
   // 位置制御モードか？
   if(servoMode == OP_POSITION)
   {
@@ -134,10 +140,73 @@ void servoControl()
   }
 }
 
+// シリアルコマンド (開発用)
+void onCommand(int argc, char const *argv[])
+{
+  if(argc <= 0) return;
+
+  // パラメータ設定
+  if(strcmp(argv[0], "set") == 0 && argc == 3)
+  {
+    if(strcmp(argv[1], "Kx") == 0) {
+      Kx = atof(argv[2]);
+      Serial.printf("Set Kx = %.2f\n", Kx);
+    }
+    else if(strcmp(argv[1], "Ky") == 0) {
+      Ky = atof(argv[2]);
+      Serial.printf("Set Ky = %.2f\n", Ky);
+    }
+    else if(strcmp(argv[1], "Vmax") == 0) {
+      Vmax = atof(argv[2]);
+      Serial.printf("Set Vmax = %.2f\n", Vmax);
+    }
+  }
+  // パラメータ表示
+  else if(strcmp(argv[0], "print") == 0 && argc == 1)
+  {
+    Serial.printf("Kx=%.2f Ky=%.2f Vmax=%.2f\n", Kx, Ky, Vmax);
+  }
+  // パラメータ保存
+  else if(strcmp(argv[0], "save") == 0 && argc == 1)
+  {
+    sdCard.Kx = Kx;
+    sdCard.Ky = Ky;
+    sdCard.Vmax = Vmax;
+    if(sdCard.save()) {
+      Serial.println("Settings saved to SD card.");
+    } else {
+      Serial.println("Failed to save settings to SD card.");
+    }
+  }
+  // おすわり
+  else if(strcmp(argv[0], "sit") == 0 && argc == 1)
+  {
+    isSitting = true;
+    Serial.println("Sit down!");
+  }
+  // おすわり解除
+  else if(strcmp(argv[0], "ok") == 0 && argc == 1)
+  {
+    for(uint8_t i = 0; i < 2; i++) {
+      uint8_t id = DXL_ID[i];
+      posOffset[i] = dxl.getPresentPosition(id, UNIT_DEGREE);
+      posTarget[i] = 0.0f;
+      posCurrent[i] = 0.0f;
+      dxl.setGoalPosition(id, posOffset[i], UNIT_DEGREE);
+    }
+     isSitting = false;
+    Serial.println("OK!");
+  }
+  else{
+    Serial.println("unknown command");
+  }
+}
+
 // 初期化
 void setup()
 {
-  Serial.begin(115200);
+  serialCmd.onCommand = onCommand;
+  serialCmd.begin();
   
   pinMode(LED0, OUTPUT);
   pinMode(LED1, OUTPUT);
@@ -205,4 +274,6 @@ void loop()
   if(servoTimer.elapsed()) {
     servoControl();
   }
+  // シリアルコマンド受信
+  serialCmd.loop();
 }
