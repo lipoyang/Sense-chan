@@ -10,6 +10,7 @@
 #include "PollingTimer.h"
 #include "SdCard.h"
 #include "SerialCmd.h"
+#include "VoiceDetector.h"
 
 // スタックチャンの顔表示器
 SenseChanFace face;
@@ -19,6 +20,9 @@ BleReceiver receiver;
 
 // バッテリー電圧監視
 BatteryCheck batteryCheck;
+
+// 音声コマンド検出器
+VoiceDetector vd;
 
 // DYNAMIXEL設定
 #define DXL_SERIAL   Serial2  // シリアルポート
@@ -197,8 +201,53 @@ void onCommand(int argc, char const *argv[])
      isSitting = false;
     Serial.println("OK!");
   }
+  // 音声コマンド登録
+  else if(strcmp(argv[0], "regist") == 0 && argc == 2)
+  {
+    int command_no = atoi(argv[1]);
+    if(command_no >=0 && command_no <= 4){
+      Serial.printf("Voice command [%d] registing...\n", command_no);
+      vd.regist(command_no);
+    }else{
+      Serial.printf("Bad voice command number (%d)\n", command_no);
+    }
+  }
+  // 音声コマンド検出
+  else if(strcmp(argv[0], "detect") == 0 && argc == 1)
+  {
+    Serial.println("Voice command detecting...");
+      vd.detect();
+  }
+  // 音声コマンド登録/検出のキャンセル
+  else if(strcmp(argv[0], "cancel") == 0 && argc == 1)
+  {
+    Serial.println("Voice command canceled!");
+      vd.cancel();
+  }
   else{
     Serial.println("unknown command");
+  }
+}
+
+// 音声コマンド登録通知
+void onRegist(uint32_t commnad_no)
+{
+  if(commnad_no < MAX_COMMAND){
+    printf("Voice Command Registed! (%ld)\n", commnad_no);
+  }else{
+    printf("Voice Command Regist ERROR! (%ld)\n", commnad_no);
+  }
+}
+
+// 音声コマンド検出通知
+void onDetect(uint32_t commnad_no)
+{
+  if(commnad_no < MAX_COMMAND){
+    printf("Voice Command Detected! (%ld)\n", commnad_no);
+  }else if(commnad_no == MFCC_MISMATCH){
+    printf("Voice Command mismatch\n");
+  }else{
+    printf("Voice Command Detect ERROR! (%ld)\n", commnad_no);
   }
 }
 
@@ -254,6 +303,11 @@ void setup()
   batteryCheck.begin();
   batteryCheck.onBatteryCheck = onBatteryCheck;
 
+  // 音声コマンド検出器の初期化
+  vd.onRegist = onRegist;
+  vd.onDetect = onDetect;
+  vd.begin();
+  
   // モータ制御用タイマ
   servoTimer.set(20);
 }
@@ -274,6 +328,12 @@ void loop()
   if(servoTimer.elapsed()) {
     servoControl();
   }
+
   // シリアルコマンド受信
   serialCmd.loop();
+
+  // 音声コマンド検出器のメインループ処理
+  vd.loop();
+
+  delay(1);
 }
