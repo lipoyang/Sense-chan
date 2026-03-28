@@ -28,15 +28,15 @@ const int8_t MSGID_RES_LOAD     = 10; // S->M MFCCデータのロード応答
 
 // 定数
 const int SAMPLE_RATE    = 16000;   // サンプリング周波数 16kHz
-const int VOICE_BUFF_SEC = 3;       // 音声コマンド登録用バッファ 3秒ぶん
+// const int VOICE_BUFF_SEC = 3;    // 音声コマンド登録用バッファ 3秒ぶん
 const int VAD_FRAME_MSEC = 10;      // VADフレーム 10msec
 const int MIC_BUFF_FRAMES = 3;      // マイクバッファのVADフレーム数 3フレーム
 
-const size_t VOICE_BUFF_SIZE = SAMPLE_RATE * VOICE_BUFF_SEC * sizeof(int16_t);
+// const size_t VOICE_BUFF_SIZE = SAMPLE_RATE * VOICE_BUFF_SEC * sizeof(int16_t);
 const size_t VAD_BUFF_SIZE   = SAMPLE_RATE * VAD_FRAME_MSEC / 1000 * sizeof(int16_t);
 const size_t MFCC_FILE_SIZE_MAX = 4096;
 
-int16_t   *voiceBuffer; // 音声コマンド登録用バッファ
+// int16_t   *voiceBuffer; // 音声コマンド登録用バッファ
 int16_t   *micBuffer1;  // マイク入力用バッファ1 (マイクから)
 int16_t   *micBuffer2;  // マイク入力用バッファ2 (サブコアへ)
 uint8_t   *fileBuffer;  // MFCCファイルバッファ 
@@ -55,7 +55,8 @@ void VoiceDetector::begin()
     // オーディオ初期化
     theAudio = AudioClass::getInstance();
     theAudio->begin(audio_attention_cb);
-    theAudio->setRecorderMode(AS_SETRECDR_STS_INPUTDEVICE_MIC, 210); // gain +21.0dB (max)
+    theAudio->setRenderingClockMode(AS_CLKMODE_NORMAL);
+    theAudio->setRecorderMode(AS_SETRECDR_STS_INPUTDEVICE_MIC, 210, 2*16000); // gain +21.0dB (max)
     theAudio->initRecorder(AS_CODECTYPE_PCM, "/mnt/sd0/BIN", AS_SAMPLINGRATE_16000, AS_BITLENGTH_16, AS_CHANNEL_MONO);
     // theAudio->startRecorder();
 
@@ -74,11 +75,19 @@ void VoiceDetector::begin()
     }
 
     // メモリ確保
-    voiceBuffer = (int16_t *)MP.AllocSharedMemory(VOICE_BUFF_SIZE + MFCC_FILE_SIZE_MAX); // ※ 96kBだが実際には128kB確保される
+    // voiceBuffer = (int16_t *)MP.AllocSharedMemory(VOICE_BUFF_SIZE + MFCC_FILE_SIZE_MAX); // ※ 96kBだが実際には128kB確保される
+    // fileBuffer = &((uint8_t*)voiceBuffer)[VOICE_BUFF_SIZE]; // ※ voiceBufferの後に配置 (バッドノウハウ)
+    // MP.Send(MSGID_SHARE_MEMORY, voiceBuffer, SUBCORE_VD);
+    size_t shareMemorySize = VAD_BUFF_SIZE + (MIC_BUFF_FRAMES * VAD_BUFF_SIZE) + MFCC_FILE_SIZE_MAX;
+    // uint8_t* shareMemory = (uint8_t *)MP.AllocSharedMemory(shareMemorySize);
+    //micBuffer1 = (int16_t *)(&shareMemory[0]);
+    //micBuffer2 = (int16_t *)(&shareMemory[VAD_BUFF_SIZE]);
+    //fileBuffer = (uint8_t *)(&shareMemory[VAD_BUFF_SIZE  + (MIC_BUFF_FRAMES * VAD_BUFF_SIZE)]);
     micBuffer1 = (int16_t *)malloc(VAD_BUFF_SIZE);
     micBuffer2 = (int16_t *)malloc(MIC_BUFF_FRAMES * VAD_BUFF_SIZE);
-    fileBuffer = &((uint8_t*)voiceBuffer)[VOICE_BUFF_SIZE]; // ※ voiceBufferの後に配置 (バッドノウハウ)
-    MP.Send(MSGID_SHARE_MEMORY, voiceBuffer, SUBCORE_VD);
+    fileBuffer = (uint8_t *)malloc(MFCC_FILE_SIZE_MAX);
+
+    MP.Send(MSGID_SHARE_MEMORY, fileBuffer, SUBCORE_VD);
 
     // 音声コマンドのMFCCデータのロード
     for(uint32_t mfcc_no = MFCC_0; mfcc_no <= MFCC_4; mfcc_no++){
