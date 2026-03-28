@@ -22,11 +22,11 @@ int frameNo; // デバッグ用
 
 const int MIC_BUFF_FRAMES = 3;      // マイクバッファのVADフレーム数 3フレーム
 constexpr int kSampleRate = 16000;
-constexpr int audioLength = kSampleRate * 3;  // 3 seconds
+// constexpr int audioLength = kSampleRate * 3;  // 3 seconds
 // constexpr int kRxBufferNum = 3;
 const size_t MFCC_FILE_SIZE_MAX = 4096;
 
-int16_t* rawAudio;
+//int16_t* rawAudio;
 //int16_t* rxBuffer;
 int16_t* rawBuffer;
 uint8_t* fileBuffer;
@@ -34,11 +34,10 @@ NoiseSuppressor nsInst;
 simplevox::VadEngine vadEngine;
 simplevox::MfccEngine mfccEngine;
 simplevox::MfccFeature* mfcc[MAX_COMMAND]; // 複数対応 by B.Nishimura
+static int mfccFrameCount = 0; // 共通処理のためグローバル化 by B.Nishimura
 
 /**
  * VAD -> Buffer -> MFCCの流れで逐次的にMFCCの算出を行う。
- * この例では参考のためにREGISTではraw dataを残しているが、
- * COMPAREの処理だけにすればraw dataは必要なくなるためメモリサイズの削減が可能となる。
  * 処理としてHangbeforeおよびPreDetection時間のデータ処理が複雑な点と
  * frame_lengthがVADとMFCCで異なり、１つの処理単位がhop_lengthである点など
  * 構造を理解していないと分からない処理が多いのが難点…。
@@ -125,8 +124,8 @@ void feature_init(const simplevox::MfccConfig& mfccConfig, const simplevox::VadC
 float* feature_get(int number) { return &features[number * mfccCoefNum]; }
 
 // 初期化
-// voiceBuffer : 音声バッファ用メモリ
-void VoiceDetector::begin(int16_t *voiceBuffer, uint8_t *fileBuffer)
+// fileBuffer : MFCCファイルバッファ用メモリ
+void VoiceDetector::begin(uint8_t *fileBuffer)
 {
   for(int i = 0; i < MAX_COMMAND; i++) mfcc[i] = nullptr; // 複数対応 by B.Nishimura
 
@@ -141,7 +140,7 @@ void VoiceDetector::begin(int16_t *voiceBuffer, uint8_t *fileBuffer)
   rxBuffer = (int16_t*)malloc(kRxBufferNum * vadConfig.frame_length() * sizeof(*rxBuffer));
 #else
   // メインコアで確保した共有メモリを使用 (by Bizan Nishimura)
-  rawAudio = voiceBuffer;
+  //rawAudio = voiceBuffer;
   ::fileBuffer = fileBuffer;
 #endif  
   raw_init(mfccConfig.frame_length() + vadConfig.frame_length());
@@ -175,53 +174,19 @@ void VoiceDetector::begin(int16_t *voiceBuffer, uint8_t *fileBuffer)
 #endif
 }
 
-// 音声コマンド登録処理
-// command_no : コマンド番号
-// 戻り値 : true:完了, false:未完了
-bool VoiceDetector::regist(uint32_t command_no)
+// VoiceDetector::regist() と VoiceDetector::detect() の共通処理
+// ※メモリ使用量削減のため by Bizan Nishimura
+bool VoiceDetector::record()
 {
+  // マイク音声の取得
   bool ret =false;
   auto* data = rxMic();
   if (data == nullptr) { return ret; }
 
+  // ノイズ抑制処理
   nsInst.process(data, data);
 
-  int length = vadEngine.detect(rawAudio, audioLength, data);
-  if (length <= 0) { return ret; }
-#if defined(WAV_FILE_DEBUG) || defined(MIC_DEBUG)
-  float t_end = (float)frameNo * 0.01f;
-  float t_len = (float)length * 0.01f / 160.0f;
-  float t_begin = t_end - t_len;
-  MPLog("Detected! %.2f - %.2f sec (len = %.2f sec)\n", t_begin, t_end, t_len);
-#endif
-  // 複数対応 by B.Nishimura
-  if (mfcc[command_no] != nullptr){ delete mfcc[command_no]; }
-  mfcc[command_no] = mfccEngine.create(rawAudio, length);
-
-#if 0 // (by Bizan Nishimura)
-  if (mfcc)
-  {
-    mfccEngine.saveFile(base_path file_name, *mfcc);
-    ret = true;
-  }
-#else
-  ret = true;
-#endif
-  vadEngine.reset();
-  return ret;
-}
-
-// 音声コマンド検出処理
-// 戻り値 : -1:未検出, 0-4:コマンド検出, MFCC_MISMATCH:不一致
-int VoiceDetector::detect()
-{
-  auto* data = rxMic();
-  if (data == nullptr) {
-    return -1; 
-  }
-  nsInst.process(data, data);
-
-  static int mfccFrameCount = 0;
+  // static int mfccFrameCount = 0;
   const auto state = vadEngine.process(data);
   const int vadFrameLength = vadEngine.config().frame_length();
   const int mfccFrameLength = mfccEngine.config().frame_length();
@@ -253,8 +218,45 @@ int VoiceDetector::detect()
   {
 #if defined(WAV_FILE_DEBUG) || defined(MIC_DEBUG)
       float t_end = (float)frameNo * 0.01f;
-      MPLog("Comparing... %.2f sec\n", t_end);
+      MPLog("Voice End @ %.2f sec\n", t_end);
 #endif
+    ret = true;
+  }
+  return ret;
+}
+
+// 音声コマンド登録処理
+// command_no : コマンド番号
+// 戻り値 : true:完了, false:未完了
+bool VoiceDetector::regist(uint32_t command_no)
+{
+  // 処理を共通化 by B.Nishimura
+  bool ret = record();
+
+  if(ret)
+  {
+    // 複数対応 by B.Nishimura
+    if (mfcc[command_no] != nullptr){ delete mfcc[command_no]; }
+    mfcc[command_no] = mfccEngine.create(features, mfccFrameCount, mfccCoefNum);
+
+    raw_reset();
+    mfccFrameCount = 0;
+    vadEngine.reset();
+
+    ret = true;
+  }
+  return ret;
+}
+
+// 音声コマンド検出処理
+// 戻り値 : -1:未検出, 0-4:コマンド検出, MFCC_MISMATCH:不一致
+int VoiceDetector::detect()
+{
+  // 処理を共通化 by B.Nishimura
+  bool ret = record();
+
+  if(ret)
+  {
     std::unique_ptr<simplevox::MfccFeature> feature(mfccEngine.create(features, mfccFrameCount, mfccCoefNum));
     
     // 複数対応 by B.Nishimura
@@ -277,6 +279,7 @@ int VoiceDetector::detect()
     raw_reset();
     mfccFrameCount = 0;
     vadEngine.reset();
+
     if(command_no >= 0){
       return command_no;
     }else{
