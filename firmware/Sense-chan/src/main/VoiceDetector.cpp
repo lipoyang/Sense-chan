@@ -78,7 +78,8 @@ void VoiceDetector::begin()
     // voiceBuffer = (int16_t *)MP.AllocSharedMemory(VOICE_BUFF_SIZE + MFCC_FILE_SIZE_MAX); // ※ 96kBだが実際には128kB確保される
     // fileBuffer = &((uint8_t*)voiceBuffer)[VOICE_BUFF_SIZE]; // ※ voiceBufferの後に配置 (バッドノウハウ)
     // MP.Send(MSGID_SHARE_MEMORY, voiceBuffer, SUBCORE_VD);
-    size_t shareMemorySize = VAD_BUFF_SIZE + (MIC_BUFF_FRAMES * VAD_BUFF_SIZE) + MFCC_FILE_SIZE_MAX;
+    
+    // size_t shareMemorySize = VAD_BUFF_SIZE + (MIC_BUFF_FRAMES * VAD_BUFF_SIZE) + MFCC_FILE_SIZE_MAX;
     // uint8_t* shareMemory = (uint8_t *)MP.AllocSharedMemory(shareMemorySize);
     //micBuffer1 = (int16_t *)(&shareMemory[0]);
     //micBuffer2 = (int16_t *)(&shareMemory[VAD_BUFF_SIZE]);

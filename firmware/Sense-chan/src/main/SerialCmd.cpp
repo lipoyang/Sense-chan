@@ -31,7 +31,7 @@ void SerialCmd::loop()
             }
             // コマンドコールバックの呼び出し
             if (onCommand != nullptr) {
-                onCommand(argc, argv);
+                onCommand(argc, (const char**)argv);
             }
         }
         else
