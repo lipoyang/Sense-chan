@@ -1,4 +1,5 @@
 #include "SenseChanFace.h"
+#include "FS_U8g2font.h"
 
 // バックライト制御ピン
 #define TFT_BL        9
@@ -6,6 +7,7 @@
 using namespace m5avatar;
 static Avatar avatar;
 static SenseChanFace *face;
+static lgfx::FS_U8g2font font; // ファイルシステム版フォント
 
 // 微動用コールバック
 static void* task_servo(void *args)
@@ -43,12 +45,18 @@ void SenseChanFace::begin()
     // バックライトON
     digitalWrite(TFT_BL, HIGH);
 
+    if(font.loadFont("/mnt/sd0/fs_efont_ja_16.bin") != true)
+    {
+        Serial.println("Font load error!");
+    }
+
     face = this;
 
     // アバターの初期化
     avatar.init();
     avatar.addTask(task_servo, "servo");  // 微動用コールバックの設定
-    avatar.setSpeechFont(&fonts::efontJA_16);
+//  avatar.setSpeechFont(&fonts::efontJA_16);
+    avatar.setSpeechFont(&font);
     avatar.setSpeechText("こんにちは");
     delay(2000);
     avatar.setSpeechText("");
@@ -83,6 +91,7 @@ void SenseChanFace::setExpression(Expression expression, int duration_ms)
 // スタックチャンのセリフを設定
 void SenseChanFace::setSpeachText(const char *text, int duration_ms)
 {
+    font.loadGlyphCache(text);
     avatar.setSpeechText(text);
     if (duration_ms > 0) {
         t0_speech = millis();

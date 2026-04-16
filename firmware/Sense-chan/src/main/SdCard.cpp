@@ -30,8 +30,15 @@ int sdcard_reset()
 
     // /mnt/sd0 が正常にマウントされていれば何もしない
     struct stat st;
-    int ret = stat(MNT_DIR, &st);
-    if (ret == 0) return 1; // すでにマウントされている
+    int ret;
+    for (int retry = 0; retry < 10; retry++) {
+        ret = stat(MNT_DIR, &st);
+        if (ret == 0){
+            return true; // すでにマウントされている
+        }
+        usleep(100 * 1000); // 100 msec
+        //Serial.print("R.");
+    }
 
     // SDIOを初期化し、OSのデバイスドライバに知らせる
     struct sdio_dev_s *sdio = cxd56_sdhci_initialize(0);
