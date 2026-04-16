@@ -2,6 +2,6 @@
   "servoParams": {
     "Kx": 120.0,
     "Ky": 60.0,
-    "Vmax": 5.0
+    "Vmax": 2.0
   }
 }

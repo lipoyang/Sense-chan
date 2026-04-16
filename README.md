@@ -13,6 +13,11 @@ SPRESENSE搭載のロボット用基板と対向2輪型ロボットおよびそ�
 * [mechanical](./mechanical/) : メカ部品のSTEPファイルとSTLファイル
 * [board](./board/) : プリント基板の回路図とパターン設計
 
+## SDカードにコピーするファイル
+
+下記のファイルをマイクロSDカードにコピーして、ｾﾝｽﾁｬﾝのマイクロSDカードスロットに挿入してください。
+* [fs_efont_ja_16.bin](./firmware/Sense-chan/sd_data/fs_efont_ja_16.bin) : フォントデータ
+* [config.json](./firmware/Sense-chan/sd_data/config.json) : 設定ファイル
 
 ## 原典
 このプロジェクトはｽﾀｯｸﾁｬﾝにインスパイアされた派生作品です。[ｽﾀｯｸﾁｬﾝ](https://github.com/stack-chan/stack-chan)は[ししかわ](https://x.com/stack_chan)さんが開発、公開している、 手乗りサイズのｽｰﾊﾟｰｶﾜｲｲコミュニケーションロボットです。
