@@ -1,8 +1,9 @@
 #pragma once
 #include <stdint.h>
+#include <Avatar.h>
 
 // 表情
-enum class Expression { Happy, Angry, Sad, Doubt, Sleepy, Neutral };
+using m5avatar::Expression;
 
 // スタックチャンの顔表示器
 class SenseChanFace
@@ -12,11 +13,20 @@ public:
     void begin();
     void loop();
     void setExpression(Expression expression, int duration_ms = 0);
-    void setBaseExpression(Expression expression);
+    void setBaseExpression(Expression expression) {baseExpression = expression;}
     void setSpeachText(const char *text, int duration_ms = 0);
     void clearSpeachText();
-    void setMicroMotion(bool enabled);
+    void setMicroMotion(bool enable) { isMicroMotion = enable; }
+    bool isMicroMotionEnabled() const { return isMicroMotion; }
 
     // 微動用コールバック
     void (*onMicroMotion)(float x, float y) = nullptr;
+
+private:
+    bool isMicroMotion = false;
+    uint32_t t0_expression;
+    uint32_t t0_speech;
+    uint32_t T_expression = 0;
+    uint32_t T_speech = 0;
+    Expression baseExpression = Expression::Neutral;
 };
