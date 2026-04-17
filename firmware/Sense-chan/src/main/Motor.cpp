@@ -95,7 +95,11 @@ void Motor::setPosition(float x, float y)
 // pause : true:一時停止 / false:解除
 void Motor::setPause(bool pause)
 {
-    uint32_t msgdata = pause ? 1 : 0;
-    MP.Send(MSGID_SET_PAUSE, msgdata, SUBCORE_MOTOR);
+    static struct {
+        bool pause;
+    } msgdata;
+    msgdata.pause = pause;
+
+    MP.Send(MSGID_SET_PAUSE, &msgdata, SUBCORE_MOTOR);
     _pausing = pause;
 }

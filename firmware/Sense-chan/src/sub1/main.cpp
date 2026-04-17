@@ -149,11 +149,15 @@ void loop()
     float Vmax;
   } S_Parameter;
 
+  typedef struct{
+    bool pause;
+  } S_Pause;
+
   typedef union {
     S_Velocity velocity;
     S_Position position;
     S_Parameter parameter;
-    bool pause;
+    S_Pause pause;
   } MsgData;
   MsgData *msgdata;
 
@@ -213,7 +217,7 @@ void loop()
     case MSGID_SET_PAUSE:
       {
         // 一時停止/解除
-        bool pausing = msgdata->pause;
+        pausing = msgdata->pause.pause;
         if(pausing == false){
           for(uint8_t i = 0; i < 2; i++) {
             uint8_t id = DXL_ID[i];
