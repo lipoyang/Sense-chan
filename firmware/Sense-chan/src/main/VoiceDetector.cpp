@@ -12,7 +12,7 @@
 static DirectMic mic;
 
 // コアID
-const int SUBCORE_VD  = 1;
+const int SUBCORE_VD  = 3;
 
 // メッセージID定義
 const int8_t MSGID_BEGUN        = 1;  // S->M 初期化完了通知

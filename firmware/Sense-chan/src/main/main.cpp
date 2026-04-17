@@ -9,7 +9,7 @@
 #include "BatteryCheck.h"
 #include "SdCard.h"
 #include "SerialCmd.h"
-//#include "VoiceDetector.h"
+#include "VoiceDetector.h"
 
 // スタックチャンの顔表示器
 SenseChanFace face;
@@ -20,7 +20,7 @@ BleReceiver receiver;
 // バッテリー電圧監視
 BatteryCheck batteryCheck;
 // 音声コマンド検出器
-//VoiceDetector vd;
+VoiceDetector vd;
 // SDカード
 SdCard sdCard;
 // USBシリアルコマンド (開発用)
@@ -138,7 +138,6 @@ void onCommand(int argc, char const *argv[])
     motor.setPause(false);
     Serial.println("OK!");
   }
-#if 0
   // 音声コマンド登録
   else if(strcmp(argv[0], "regist") == 0 && argc == 2)
   {
@@ -162,13 +161,11 @@ void onCommand(int argc, char const *argv[])
     Serial.println("Voice command canceled!");
       vd.cancel();
   }
-#endif
   else{
     Serial.println("unknown command");
   }
 }
 
-#if 0
 // 音声コマンド登録通知
 void onRegist(uint32_t commnad_no)
 {
@@ -190,7 +187,6 @@ void onDetect(uint32_t commnad_no)
     printf("Voice Command Detect ERROR! (%ld)\n", commnad_no);
   }
 }
-#endif
 
 // 初期化
 void setup()
@@ -227,9 +223,9 @@ void setup()
   batteryCheck.onBatteryCheck = onBatteryCheck;
 
   // 音声コマンド検出器の初期化
-  //vd.onRegist = onRegist;
-  //vd.onDetect = onDetect;
-  //vd.begin();
+  vd.onRegist = onRegist;
+  vd.onDetect = onDetect;
+  vd.begin();
 }
 
 // メインループ
@@ -246,7 +242,7 @@ void loop()
   // シリアルコマンド受信
   serialCmd.loop();
   // 音声コマンド検出器
-  //vd.loop();
+  vd.loop();
 
   usleep(1000);
 }
