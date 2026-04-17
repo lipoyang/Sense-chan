@@ -158,7 +158,11 @@ void Face::draw(DrawContext *ctx) {
     tmpSprite->pushSprite(&Display, boundingRect->getLeft(), boundingRect->getTop() + y);
 
     // DMA転送中にdelay処理を設けることにより、DMA転送中に他のタスクへCPU処理時間を譲ることができる。
+#if defined (ARDUINO_ARCH_SPRESENSE)
+    usleep(1000); // ※ delay(1) だとスピンロックでタスクスイッチしないので (by B.Nishimura)
+#else
     lgfx::delay(1);
+#endif
 
     // endWriteによってDMA転送の終了を待つ。
     Display.endWrite();
