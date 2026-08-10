@@ -223,9 +223,9 @@ void setup()
   batteryCheck.onBatteryCheck = onBatteryCheck;
 
   // 音声コマンド検出器の初期化
-  vd.onRegist = onRegist;
-  vd.onDetect = onDetect;
-  vd.begin();
+  //vd.onRegist = onRegist;
+  //vd.onDetect = onDetect;
+  //vd.begin();
 }
 
 // メインループ
@@ -242,7 +242,7 @@ void loop()
   // シリアルコマンド受信
   serialCmd.loop();
   // 音声コマンド検出器
-  vd.loop();
+  //vd.loop();
 
   usleep(1000);
 }
