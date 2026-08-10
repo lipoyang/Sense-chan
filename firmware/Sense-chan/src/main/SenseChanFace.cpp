@@ -43,7 +43,8 @@ void SenseChanFace::begin()
     Display.fillScreen(TFT_BLACK);
 
     // バックライトON
-    digitalWrite(TFT_BL, HIGH);
+    // digitalWrite(TFT_BL, HIGH);
+    analogWrite(TFT_BL, 128); // PWM 50%
 
     if(font.loadFont("/mnt/sd0/fs_efont_ja_16.bin") != true)
     {
