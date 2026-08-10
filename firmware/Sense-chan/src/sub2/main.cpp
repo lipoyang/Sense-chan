@@ -17,8 +17,16 @@ const int8_t MSGID_DISCONNECT = 3;
 const int8_t MSGID_RECEIVE = 4;
 
 // ソフトウェアシリアルのピン
+#ifdef USE_M5NANOC6
+// M5NanoC6 をGroveコネクタで接続
 #define PIN_RX 2
 #define PIN_TX 4
+#else
+// 改造版BLE1507をメインボードにアドオン
+// https://lipoyang.hatenablog.com/entry/2026/08/02/162110
+#define PIN_RX 25
+#define PIN_TX 26
+#endif
 SoftwareSerial softSerial(PIN_RX, PIN_TX);
 
 // BLEラジコン受信器
@@ -114,7 +122,7 @@ void setup()
   }
 
   // BLEラジコン受信器の初期化
-  softSerial.begin(19200);
+  softSerial.begin(115200);
   receiver.onConnect = onConnect;
   receiver.onDisconnect = onDisconnect;
   receiver.onLost = onLost;

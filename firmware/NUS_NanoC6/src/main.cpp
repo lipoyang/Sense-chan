@@ -66,7 +66,7 @@ void setup()
   LOG_BEGIN(115200);
 
   // ハードウェアシリアルポート (Groveコネクタ)
-  Serial1.begin(19200, SERIAL_8N1, PIN_RX, PIN_TX);
+  Serial1.begin(115200, SERIAL_8N1, PIN_RX, PIN_TX);
 
   // BLEデバイスを初期化
   BLEDevice::init("M5 NUS");
