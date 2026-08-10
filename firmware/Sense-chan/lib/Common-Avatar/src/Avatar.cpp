@@ -241,9 +241,8 @@ void Avatar::start(int colorDepth) {
   pthread_attr_setstacksize(&attr, 2048);
   pthread_attr_setschedpolicy(&attr, SCHED_RR); // （SCHED_FIFO/SCHED_RR）
   pthread_attr_setinheritsched(&attr, PTHREAD_EXPLICIT_SCHED);
-// TODO
-//  param.sched_priority = 10;
-//  pthread_attr_setschedparam(&attr, &param);
+  param.sched_priority = 100;
+  pthread_attr_setschedparam(&attr, &param);
   
   pthread_create(&drawTaskHandle, &attr, drawLoop, ctx);
   
@@ -255,9 +254,8 @@ void Avatar::start(int colorDepth) {
   pthread_attr_setstacksize(&attr, 1024);
   pthread_attr_setschedpolicy(&attr, SCHED_RR); // （SCHED_FIFO/SCHED_RR）
   pthread_attr_setinheritsched(&attr, PTHREAD_EXPLICIT_SCHED);
-// TODO
-//  param.sched_priority = 20;
-//  pthread_attr_setschedparam(&attr, &param);
+  param.sched_priority = 101;
+  pthread_attr_setschedparam(&attr, &param);
   
   pthread_create(&facialTaskHandle, &attr, facialLoop, ctx);
   
