@@ -10,4 +10,8 @@ public:
     void (*onConnect)();
     void (*onDisconnect)();
     void (*onReceive)(int l, int r);
+
+    int RX = 25;   // RXピン番号
+    int TX = 26;   // TXピン番号
+    int Baud = 115200; // シリアル通信速度
 };

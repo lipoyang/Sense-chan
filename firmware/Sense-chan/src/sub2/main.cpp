@@ -11,23 +11,14 @@
 const int MAINCORE_ID = 0;
 
 // メッセージID定義
+const int8_t MSGID_SET_PARAMS = 0;
 const int8_t MSGID_BEGUN = 1;
 const int8_t MSGID_CONNECT = 2;
 const int8_t MSGID_DISCONNECT = 3;
 const int8_t MSGID_RECEIVE = 4;
 
 // ソフトウェアシリアルのピン
-#ifdef USE_M5NANOC6
-// M5NanoC6 をGroveコネクタで接続
-#define PIN_RX 2
-#define PIN_TX 4
-#else
-// 改造版BLE1507をメインボードにアドオン
-// https://lipoyang.hatenablog.com/entry/2026/08/02/162110
-#define PIN_RX 25
-#define PIN_TX 26
-#endif
-SoftwareSerial softSerial(PIN_RX, PIN_TX);
+SoftwareSerial *softSerial;
 
 // BLEラジコン受信器
 SprReceiverBLE receiver;
@@ -120,19 +111,38 @@ void setup()
   if (ret < 0) {
     errorLoop(2);
   }
+  uint32_t dummy = 0;
+  MP.RecvTimeout(MP_RECV_BLOCKING);
+  MP.Send(MSGID_BEGUN, dummy, MAINCORE_ID);
+
+  // SoftwareSerialのパラメータをメインコアから受信
+  int8_t msgid;
+  struct SoftSerialParams {
+    int RX;
+    int TX;
+    int Baud;
+  } *softSerialParams;
+  do {
+    MP.Recv(&msgid, &softSerialParams);
+    if(msgid == MSGID_SET_PARAMS){
+      break;
+    }else{
+      MPLog("Unexpected message %d\n", msgid);
+    }
+  } while(1);
 
   // BLEラジコン受信器の初期化
-  softSerial.begin(115200);
+  softSerial = new SoftwareSerial(softSerialParams->RX, softSerialParams->TX);
+  softSerial->begin(softSerialParams->Baud);
   receiver.onConnect = onConnect;
   receiver.onDisconnect = onDisconnect;
   receiver.onLost = onLost;
   receiver.onTH = onTH;
   receiver.onST = onST;
-  receiver.begin(softSerial);
-
-  // 初期化完了をメインコアに知らせる
-  uint32_t dummy = 0;
-  MP.Send(MSGID_BEGUN, dummy, MAINCORE_ID);
+  receiver.begin(*softSerial);
+  
+  // 設定完了をメインコアに知らせる
+  MP.Send(MSGID_SET_PARAMS, dummy, MAINCORE_ID);
   MP.RecvTimeout(MP_RECV_POLLING);
 }
 

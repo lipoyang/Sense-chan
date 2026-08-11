@@ -5,6 +5,7 @@
 const int SUBCORE_BLE = 2;
 
 // メッセージID定義
+const int8_t MSGID_SET_PARAMS = 0;
 const int8_t MSGID_BEGUN = 1;
 const int8_t MSGID_CONNECT = 2;
 const int8_t MSGID_DISCONNECT = 3;
@@ -26,6 +27,22 @@ void BleReceiver::begin()
     if (msgid != MSGID_BEGUN) {
         Serial.printf("BleReceiver: MP.Recv error: no BEGUN message %d\n", msgid);
     }
+
+    // サブコアにシリアル通信パラメータを送信
+    struct SoftSerialParams {
+        int RX;
+        int TX;
+        int Baud;
+    } softSerialParams;
+    softSerialParams.RX = RX;
+    softSerialParams.TX = TX;
+    softSerialParams.Baud = Baud;
+    MP.Send(MSGID_SET_PARAMS, &softSerialParams, SUBCORE_BLE);
+    MP.Recv(&msgid, &dummy, SUBCORE_BLE);
+    if (msgid != MSGID_SET_PARAMS) {
+        Serial.printf("BleReceiver: MP.Recv error: no SET_PARAMS message %d\n", msgid);
+    }
+
     // 受信をポーリングに変更
     MP.RecvTimeout(MP_RECV_POLLING);
 }
