@@ -11,6 +11,7 @@ public:
     float Kx = 60.0f;
     float Ky = 60.0f;
     float Vmax = 2.0f;
+    float Vfull = 12.0f;
     int RX = 25;
     int TX = 26;
     int Baud = 115200;

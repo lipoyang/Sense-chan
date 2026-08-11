@@ -1,5 +1,5 @@
 {
-  "servoParams":{"Kx":60,"Ky":60,"Vmax":2},
+  "servoParams":{"Kx":60,"Ky":60,"Vmax":2,"Vfull":12},
   "softSerialPorts":{"RX":25,"TX":26,"Baud":115200},
   "lcd":{"PWM":50}
 }

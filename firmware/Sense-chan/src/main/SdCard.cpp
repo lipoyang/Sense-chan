@@ -104,6 +104,7 @@ bool SdCard::load()
         Kx   = params["Kx"]   | 60.0f;
         Ky   = params["Ky"]   | 60.0f;
         Vmax = params["Vmax"] | 2.0f;
+        Vfull = params["Vfull"] | 12.0f;
     }
     {
         JsonObject params = doc["softSerialPorts"];
@@ -128,6 +129,7 @@ bool SdCard::load()
     Serial.println(Kx);
     Serial.println(Ky);
     Serial.println(Vmax);
+    Serial.println(Vfull);
     Serial.println(RX);
     Serial.println(TX);
     Serial.println(Baud);
@@ -145,6 +147,7 @@ bool SdCard::save()
         params["Kx"] = Kx;
         params["Ky"] = Ky;
         params["Vmax"] = Vmax;
+        params["Vfull"] = Vfull;
     }
     {
         JsonObject params = doc.createNestedObject("softSerialPorts");

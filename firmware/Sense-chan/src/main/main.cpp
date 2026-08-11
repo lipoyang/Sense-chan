@@ -107,12 +107,17 @@ void onCommand(int argc, char const *argv[])
       motor.setParameter();
       Serial.printf("Set Vmax = %.2f\n", motor.parameter.Vmax);
     }
+    else if(strcmp(argv[1], "Vfull") == 0) {
+      motor.parameter.Vfull = atof(argv[2]);
+      motor.setParameter();
+      Serial.printf("Set Vfull = %.2f\n", motor.parameter.Vfull);
+    }
   }
   // パラメータ表示
   else if(strcmp(argv[0], "print") == 0 && argc == 1)
   {
-    Serial.printf("Kx=%.2f Ky=%.2f Vmax=%.2f\n",
-    motor.parameter.Kx, motor.parameter.Ky, motor.parameter.Vmax);
+    Serial.printf("Kx=%.2f Ky=%.2f Vmax=%.2f Vfull=%.2f\n",
+    motor.parameter.Kx, motor.parameter.Ky, motor.parameter.Vmax, motor.parameter.Vfull);
   }
   // パラメータ保存
   else if(strcmp(argv[0], "save") == 0 && argc == 1)
@@ -120,6 +125,7 @@ void onCommand(int argc, char const *argv[])
     sdCard.Kx = motor.parameter.Kx;
     sdCard.Ky = motor.parameter.Ky;
     sdCard.Vmax = motor.parameter.Vmax;
+    sdCard.Vfull = motor.parameter.Vfull;
     if(sdCard.save()) {
       Serial.println("Settings saved to SD card.");
     } else {
@@ -200,6 +206,7 @@ void setup()
     motor.parameter.Kx   = sdCard.Kx;
     motor.parameter.Ky   = sdCard.Ky;
     motor.parameter.Vmax = sdCard.Vmax;
+    motor.parameter.Vfull = sdCard.Vfull;
     face.pwmBL = sdCard.PWM;
     receiver.RX = sdCard.RX;
     receiver.TX = sdCard.TX;

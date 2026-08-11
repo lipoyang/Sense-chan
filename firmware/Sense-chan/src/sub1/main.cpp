@@ -36,6 +36,7 @@ float posCurrent[2] = {0.0f, 0.0f}; // 現在値
 float Kx = 120.0f;  // 旋回成分の係数 [度]
 float Ky = 60.0f;   // 並進成分の係数 [度]
 float Vmax = 2.0f;  // 位置制御の台形制御の最大速度
+float Vfull = 12.0f; // 速度制御の最大速度 [%]
 bool pausing = false; // 一時停止中か？
 
 // エラーループ
@@ -109,6 +110,7 @@ void setup()
     float Kx;   // 旋回成分の係数 [度]
     float Ky;   // 並進成分の係数 [度]
     float Vmax; // // 位置制御の台形制御の最大速度
+    float Vfull; // 速度制御の最大速度 [%]
   };
   Parameter* pParam;
   MP.Recv(&msgid, &pParam);
@@ -118,6 +120,7 @@ void setup()
   Kx = pParam->Kx;
   Ky = pParam->Ky;
   Vmax = pParam->Vmax;
+  Vfull = pParam->Vfull;
   MP.Send(MSGID_SET_PARAMETER, dummy, MAINCORE_ID);
 
   MP.RecvTimeout(MP_RECV_POLLING);
@@ -147,6 +150,7 @@ void loop()
     float Kx;
     float Ky;
     float Vmax;
+    float Vfull;
   } S_Parameter;
 
   typedef struct{
@@ -169,6 +173,7 @@ void loop()
       Kx   = msgdata->parameter.Kx;
       Ky   = msgdata->parameter.Ky;
       Vmax = msgdata->parameter.Vmax;
+      Vfull = msgdata->parameter.Vfull;
       break;
     case MSGID_SET_VELOCITY_MODE:
       // DYNAMIXELシリアルサーボを速度制御に変更
@@ -198,8 +203,8 @@ void loop()
     case MSGID_SET_VELOCITY:
       {
         // モータの速度制御
-        float l = msgdata->velocity.l;
-        float r = msgdata->velocity.r;
+        float l = Vfull * msgdata->velocity.l / 127.0f;
+        float r = Vfull * msgdata->velocity.r / 127.0f;
         // 対向二輪駆動なので極性に注意
         dxl.setGoalVelocity(DXL_ID[0], +l, UNIT_PERCENT);
         dxl.setGoalVelocity(DXL_ID[1], -r, UNIT_PERCENT);
