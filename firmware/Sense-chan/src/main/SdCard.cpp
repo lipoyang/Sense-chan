@@ -95,19 +95,43 @@ bool SdCard::load()
     }
 
     // 値を取得
-    JsonObject params = doc["servoParams"];
-    if (params.isNull()) {
-        Serial.println("servoParams not found.");
-        return false;
+    {
+        JsonObject params = doc["servoParams"];
+        if (params.isNull()) {
+            Serial.println("servoParams not found.");
+            return false;
+        }
+        Kx   = params["Kx"]   | 60.0f;
+        Ky   = params["Ky"]   | 60.0f;
+        Vmax = params["Vmax"] | 2.0f;
     }
-    Kx   = params["Kx"]   | 120.0f;
-    Ky   = params["Ky"]   | 60.0f;
-    Vmax = params["Vmax"] | 2.0f;
+    {
+        JsonObject params = doc["softSerialPorts"];
+        if (params.isNull()) {
+            Serial.println("softSerialPorts not found.");
+            return false;
+        }
+        RX   = params["RX"]   | 25;
+        TX   = params["TX"]   | 26;
+        Baud  = params["Baud"] | 115200;
+    }
+    {
+        JsonObject params = doc["lcd"];
+        if (params.isNull()) {
+            Serial.println("lcd not found.");
+            return false;
+        }
+        PWM   = params["PWM"] | 50.0f;
+    }
 
     Serial.println("Loaded parameters:");
     Serial.println(Kx);
     Serial.println(Ky);
     Serial.println(Vmax);
+    Serial.println(RX);
+    Serial.println(TX);
+    Serial.println(Baud);
+    Serial.println(PWM);
 
     return true;
 }
@@ -116,10 +140,22 @@ bool SdCard::save()
 {
     // JSON ドキュメント作成
     StaticJsonDocument<256> doc;
-    JsonObject params = doc.createNestedObject("servoParams");
-    params["Kx"] = Kx;
-    params["Ky"] = Ky;
-    params["Vmax"] = Vmax;
+    {
+        JsonObject params = doc.createNestedObject("servoParams");
+        params["Kx"] = Kx;
+        params["Ky"] = Ky;
+        params["Vmax"] = Vmax;
+    }
+    {
+        JsonObject params = doc.createNestedObject("softSerialPorts");
+        params["RX"] = RX;
+        params["TX"] = TX;
+        params["Baud"] = Baud;
+    }
+    {
+        JsonObject params = doc.createNestedObject("lcd");
+        params["PWM"] = PWM;
+    }
 
     // SD カードに書き込み
     SD.remove("/config.json");

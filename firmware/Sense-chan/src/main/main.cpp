@@ -200,6 +200,7 @@ void setup()
     motor.parameter.Kx   = sdCard.Kx;
     motor.parameter.Ky   = sdCard.Ky;
     motor.parameter.Vmax = sdCard.Vmax;
+    face.pwmBL = sdCard.PWM;
   }
   
   // BLEラジコン受信器の初期化

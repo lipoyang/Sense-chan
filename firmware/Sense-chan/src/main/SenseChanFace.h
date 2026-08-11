@@ -22,6 +22,8 @@ public:
     // 微動用コールバック
     void (*onMicroMotion)(float x, float y) = nullptr;
 
+    float pwmBL = 30.0f; // バックライトPWM (0.0～100.0)
+
 private:
     bool isMicroMotion = false;
     uint32_t t0_expression;

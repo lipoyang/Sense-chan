@@ -44,7 +44,7 @@ void SenseChanFace::begin()
 
     // バックライトON
     // digitalWrite(TFT_BL, HIGH);
-    analogWrite(TFT_BL, 128); // PWM 50%
+    analogWrite(TFT_BL, (int)(255.0f * pwmBL / 100.0));
 
     if(font.loadFont("/mnt/sd0/fs_efont_ja_16.bin") != true)
     {
