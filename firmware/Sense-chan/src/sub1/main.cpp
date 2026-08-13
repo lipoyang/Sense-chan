@@ -5,6 +5,7 @@
 #include <Arduino.h>
 #include <MP.h>
 #include <Dynamixel2Arduino.h>
+#include "IMU.h"
 #include "PollingTimer.h"
 
 // メインコアID
@@ -39,6 +40,9 @@ float Vmax = 2.0f;  // 位置制御の台形制御の最大速度
 float Vfull = 12.0f; // 速度制御の最大速度 [%]
 bool pausing = false; // 一時停止中か？
 
+// IMUセンサ関連
+IMU imu;
+
 // エラーループ
 void errorLoop(int num)
 {
@@ -72,6 +76,12 @@ void servoControl()
       dxl.setGoalPosition(id, posOffset[i] + posCurrent[i], UNIT_DEGREE);
     }
   }
+  float heading = imu.getHeading();
+  static int cnt = 0;
+  if(++cnt >= 50) {
+    cnt = 0;
+    MPLog("Heading=%.2f\n", heading);
+  }
 }
 
 // 初期化
@@ -98,6 +108,14 @@ void setup()
     dxl.torqueOn(id);
   }
   servoMode = OP_POSITION;
+
+  MPLog("IMU: HOGE1");
+  // IMUセンサの初期化
+  if(!imu.begin()){
+    MPLog("IMU: begin error");
+    // errorLoop(3);
+  }
+  MPLog("IMU: HOGE2");
   
   // 初期化完了をメインコアに知らせる
   uint32_t dummy = 0;
@@ -115,7 +133,7 @@ void setup()
   Parameter* pParam;
   MP.Recv(&msgid, &pParam);
   if (msgid != MSGID_SET_PARAMETER) {
-      Serial.printf("Motor: MP.Recv error: no SET_PARAMETER message %d\n", msgid);
+      MPLog("Motor: MP.Recv error: no SET_PARAMETER message %d\n", msgid);
   }
   Kx = pParam->Kx;
   Ky = pParam->Ky;

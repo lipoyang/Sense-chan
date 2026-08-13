@@ -16,7 +16,7 @@ const int8_t MSGID_SET_PAUSE = 7;
 // 初期化
 void Motor::begin()
 {
-    // LCD表示処理用のサブコア起動
+    // モータ制御用のサブコア起動
     int ret = MP.begin(SUBCORE_MOTOR);
     if (ret < 0) {
         Serial.printf("Motor: MP.begin error = %d\n", ret);
