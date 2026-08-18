@@ -105,9 +105,9 @@ bool SdCard::load()
         Ky   = params["Ky"]   | 60.0f;
         Vmax = params["Vmax"] | 2.0f;
         Vfull = params["Vfull"] | 12.0f;
-        Kp   = params["Kp"]   | 0.5f;
+        Kp   = params["Kp"]   | 0.25f;
         Ki   = params["Ki"]   | 0.0f;
-        Kd   = params["Kd"]   | 0.0f;
+        Kd   = params["Kd"]   | 0.25f;
     }
     {
         JsonObject params = doc["softSerialPorts"];

@@ -38,11 +38,14 @@ void IMU::update()
   if(calibCnt < 0){
     g -= g0; // オフセットを引く
     theta += g * 0.020f; // 累積して方位角を更新
+    gyro = g;
   }
   // キャリブレーション中
   else if(calibCnt < 100){
     g0 += g;
     calibCnt++;
+    theta = 0.0f;
+    gyro = 0.0f;
   }
   // キャリブレーション完了
   if(calibCnt == 100){

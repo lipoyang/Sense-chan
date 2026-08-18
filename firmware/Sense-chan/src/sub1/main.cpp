@@ -38,10 +38,11 @@ float Kx = 120.0f;  // 旋回成分の係数 [度]
 float Ky = 60.0f;   // 並進成分の係数 [度]
 float Vmax = 2.0f;  // 位置制御の台形制御の最大速度
 float Vfull = 12.0f; // 速度制御の最大速度 [%]
-float Kp = 0.5f;  // PID制御の比例ゲイン
-float Ki = 0.0f;  // PID制御の積分ゲイン
-float Kd = 0.0f;  // PID制御の微分ゲイン
+float Kp = 0.25f;  // PID制御の比例ゲイン
+float Ki = 0.0f;   // PID制御の積分ゲイン
+float Kd = 0.25f;  // PID制御の微分ゲイン
 bool pausing = false; // 一時停止中か？
+float ie = 0.0f; // PID制御の積分値
 
 // IMUセンサ関連
 IMU imu;
@@ -67,12 +68,13 @@ void servoControl()
   if(pausing) return; // 一時停止中
 
   // 方位角の取得
-  float heading = imu.getHeading();
+  float theta = imu.getTheta();
+  float gyro = imu.getGyro();
   static int cnt = 0;
 
   //const float k = 81.1f / 57.2f; // 超信地旋回の係数 = 車輪間距離 / 車輪直径
-  //posTarget[0] =  -k * heading;
-  //posTarget[1] =  -k * heading;
+  //posTarget[0] =  -k * theta;
+  //posTarget[1] =  -k * theta;
 
   // 位置制御モードか？
   if(servoMode == OP_POSITION)
@@ -90,18 +92,24 @@ void servoControl()
     if(++cnt >= 50) {
       cnt = 0;
       MPLog("Theta=%.2f, target=%.2f, %.2f, current=%.2f, %.2f, offset=%.2f, %.2f\n",
-        heading, posTarget[0], posTarget[1], posCurrent[0], posCurrent[1], posOffset[0], posOffset[1]);
+        theta, posTarget[0], posTarget[1], posCurrent[0], posCurrent[1], posOffset[0], posOffset[1]);
     }
 
   }else if(servoMode == OP_VELOCITY) {
     // 速度制御モード
-    float v =  -Kp * heading;
+    if(theta > 5.0f || theta < -5.0f) {
+      ie = 0.0f; // 積分値をリセット (Anti-windup)
+    }else{
+      ie += theta;
+    }
+
+    float v =  -Kp * theta - Ki * ie - Kd * gyro;
     dxl.setGoalVelocity(DXL_ID[0], v, UNIT_PERCENT);
     dxl.setGoalVelocity(DXL_ID[1], v, UNIT_PERCENT);
 
     if(++cnt >= 50) {
       cnt = 0;
-      MPLog("Theta=%.2f, target=%.2f\n", heading, v);
+      // MPLog("theta=%.2f, v=%.2f, ie=%.2f, gyro=%.2f\n", theta, v, ie, gyro);
     }
   }
 }

@@ -219,9 +219,6 @@ void setup()
   serialCmd.onCommand = onCommand;
   serialCmd.begin();
 
-  // DYNAMIXELシリアルサーボの初期化 (位置制御)
-  motor.begin();
-  
   // SDカードの初期化と設定読み込み
   if(sdCard.begin()){
     sdCard.load();
@@ -237,6 +234,9 @@ void setup()
     receiver.TX = sdCard.TX;
     receiver.Baud = sdCard.Baud;
   }
+
+  // DYNAMIXELシリアルサーボの初期化 (位置制御)
+  motor.begin();
   
   // BLEラジコン受信器の初期化
   receiver.onConnect = onConnect;
