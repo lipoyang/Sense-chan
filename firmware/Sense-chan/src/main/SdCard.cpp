@@ -85,7 +85,7 @@ bool SdCard::load()
     }
 
     // JSON を読み込む
-    StaticJsonDocument<256> doc;
+    StaticJsonDocument<512> doc;
     DeserializationError err = deserializeJson(doc, file);
     file.close();
     if (err) {
@@ -105,6 +105,9 @@ bool SdCard::load()
         Ky   = params["Ky"]   | 60.0f;
         Vmax = params["Vmax"] | 2.0f;
         Vfull = params["Vfull"] | 12.0f;
+        Kp   = params["Kp"]   | 0.5f;
+        Ki   = params["Ki"]   | 0.0f;
+        Kd   = params["Kd"]   | 0.0f;
     }
     {
         JsonObject params = doc["softSerialPorts"];
@@ -130,6 +133,9 @@ bool SdCard::load()
     Serial.println(Ky);
     Serial.println(Vmax);
     Serial.println(Vfull);
+    Serial.println(Kp);
+    Serial.println(Ki);
+    Serial.println(Kd);
     Serial.println(RX);
     Serial.println(TX);
     Serial.println(Baud);
@@ -141,13 +147,16 @@ bool SdCard::load()
 bool SdCard::save()
 {
     // JSON ドキュメント作成
-    StaticJsonDocument<256> doc;
+    StaticJsonDocument<512> doc;
     {
         JsonObject params = doc.createNestedObject("servoParams");
         params["Kx"] = Kx;
         params["Ky"] = Ky;
         params["Vmax"] = Vmax;
         params["Vfull"] = Vfull;
+        params["Kp"] = Kp;
+        params["Ki"] = Ki;
+        params["Kd"] = Kd;
     }
     {
         JsonObject params = doc.createNestedObject("softSerialPorts");

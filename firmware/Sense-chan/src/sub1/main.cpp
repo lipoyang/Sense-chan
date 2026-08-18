@@ -38,6 +38,9 @@ float Kx = 120.0f;  // 旋回成分の係数 [度]
 float Ky = 60.0f;   // 並進成分の係数 [度]
 float Vmax = 2.0f;  // 位置制御の台形制御の最大速度
 float Vfull = 12.0f; // 速度制御の最大速度 [%]
+float Kp = 0.5f;  // PID制御の比例ゲイン
+float Ki = 0.0f;  // PID制御の積分ゲイン
+float Kd = 0.0f;  // PID制御の微分ゲイン
 bool pausing = false; // 一時停止中か？
 
 // IMUセンサ関連
@@ -66,10 +69,10 @@ void servoControl()
   // 方位角の取得
   float heading = imu.getHeading();
   static int cnt = 0;
-  if(++cnt >= 50) {
-    cnt = 0;
-    MPLog("Heading=%.2f\n", heading);
-  }
+
+  //const float k = 81.1f / 57.2f; // 超信地旋回の係数 = 車輪間距離 / 車輪直径
+  //posTarget[0] =  -k * heading;
+  //posTarget[1] =  -k * heading;
 
   // 位置制御モードか？
   if(servoMode == OP_POSITION)
@@ -82,6 +85,23 @@ void servoControl()
       if (diff < -Vmax) diff = -Vmax;
       posCurrent[i] += diff;
       dxl.setGoalPosition(id, posOffset[i] + posCurrent[i], UNIT_DEGREE);
+    }
+
+    if(++cnt >= 50) {
+      cnt = 0;
+      MPLog("Theta=%.2f, target=%.2f, %.2f, current=%.2f, %.2f, offset=%.2f, %.2f\n",
+        heading, posTarget[0], posTarget[1], posCurrent[0], posCurrent[1], posOffset[0], posOffset[1]);
+    }
+
+  }else if(servoMode == OP_VELOCITY) {
+    // 速度制御モード
+    float v =  -Kp * heading;
+    dxl.setGoalVelocity(DXL_ID[0], v, UNIT_PERCENT);
+    dxl.setGoalVelocity(DXL_ID[1], v, UNIT_PERCENT);
+
+    if(++cnt >= 50) {
+      cnt = 0;
+      MPLog("Theta=%.2f, target=%.2f\n", heading, v);
     }
   }
 }
@@ -102,14 +122,17 @@ void setup()
     uint8_t id = DXL_ID[i];
     dxl.ping(id);
     dxl.torqueOff(id);
-    dxl.setOperatingMode(id, OP_POSITION);
+    dxl.setOperatingMode(id, OP_VELOCITY); //OP_POSITION); // TODO
+    dxl.setGoalVelocity(id, 0, UNIT_PERCENT); // TODO
+    /* TODO
     posOffset[i] = dxl.getPresentPosition(id, UNIT_DEGREE);
     posTarget[i] = 0.0f;
     posCurrent[i] = 0.0f;
     dxl.setGoalPosition(id, posOffset[i], UNIT_DEGREE);
+    */
     dxl.torqueOn(id);
   }
-  servoMode = OP_POSITION;
+  servoMode = OP_VELOCITY; // TODO OP_POSITION;
 
   // IMUセンサの初期化
   if(!imu.begin()){
@@ -130,6 +153,9 @@ void setup()
     float Ky;   // 並進成分の係数 [度]
     float Vmax; // // 位置制御の台形制御の最大速度
     float Vfull; // 速度制御の最大速度 [%]
+    float Kp;   // PID制御の比例ゲイン
+    float Ki;   // PID制御の積分ゲイン
+    float Kd;   // PID制御の微分ゲイン
   };
   Parameter* pParam;
   MP.Recv(&msgid, &pParam);
@@ -140,6 +166,9 @@ void setup()
   Ky = pParam->Ky;
   Vmax = pParam->Vmax;
   Vfull = pParam->Vfull;
+  Kp = pParam->Kp;
+  Ki = pParam->Ki;
+  Kd = pParam->Kd;
   MP.Send(MSGID_SET_PARAMETER, dummy, MAINCORE_ID);
 
   MP.RecvTimeout(MP_RECV_POLLING);
@@ -170,6 +199,9 @@ void loop()
     float Ky;
     float Vmax;
     float Vfull;
+    float Kp;
+    float Ki;
+    float Kd;
   } S_Parameter;
 
   typedef struct{
@@ -193,6 +225,9 @@ void loop()
       Ky   = msgdata->parameter.Ky;
       Vmax = msgdata->parameter.Vmax;
       Vfull = msgdata->parameter.Vfull;
+      Kp = msgdata->parameter.Kp;
+      Ki = msgdata->parameter.Ki;
+      Kd = msgdata->parameter.Kd;
       break;
     case MSGID_SET_VELOCITY_MODE:
       // DYNAMIXELシリアルサーボを速度制御に変更
@@ -234,8 +269,8 @@ void loop()
         // モータの位置制御
         float x = msgdata->position.x;
         float y = msgdata->position.y;
-        posTarget[0] =  Kx * x + Ky * y; // 左
-        posTarget[1] = -Kx * x + Ky * y; // 右
+        // posTarget[0] =  Kx * x + Ky * y; // 左
+        // posTarget[1] = -Kx * x + Ky * y; // 右
       }
       break;
     case MSGID_SET_PAUSE:
@@ -246,9 +281,9 @@ void loop()
           for(uint8_t i = 0; i < 2; i++) {
             uint8_t id = DXL_ID[i];
             posOffset[i] = dxl.getPresentPosition(id, UNIT_DEGREE);
-            posTarget[i] = 0.0f;
-            posCurrent[i] = 0.0f;
-            dxl.setGoalPosition(id, posOffset[i], UNIT_DEGREE);
+            // posTarget[i] = 0.0f;
+            // posCurrent[i] = 0.0f;
+            // dxl.setGoalPosition(id, posOffset[i], UNIT_DEGREE);
           }
         }
       }
