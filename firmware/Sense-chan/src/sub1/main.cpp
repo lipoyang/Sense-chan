@@ -63,6 +63,14 @@ void servoControl()
 {
   if(pausing) return; // 一時停止中
 
+  // 方位角の取得
+  float heading = imu.getHeading();
+  static int cnt = 0;
+  if(++cnt >= 50) {
+    cnt = 0;
+    MPLog("Heading=%.2f\n", heading);
+  }
+
   // 位置制御モードか？
   if(servoMode == OP_POSITION)
   {
@@ -75,12 +83,6 @@ void servoControl()
       posCurrent[i] += diff;
       dxl.setGoalPosition(id, posOffset[i] + posCurrent[i], UNIT_DEGREE);
     }
-  }
-  float heading = imu.getHeading();
-  static int cnt = 0;
-  if(++cnt >= 50) {
-    cnt = 0;
-    MPLog("Heading=%.2f\n", heading);
   }
 }
 
@@ -109,13 +111,12 @@ void setup()
   }
   servoMode = OP_POSITION;
 
-  MPLog("IMU: HOGE1");
   // IMUセンサの初期化
   if(!imu.begin()){
     MPLog("IMU: begin error");
     // errorLoop(3);
   }
-  MPLog("IMU: HOGE2");
+  imu.calibrate(); // キャリブレーション開始
   
   // 初期化完了をメインコアに知らせる
   uint32_t dummy = 0;
@@ -257,5 +258,6 @@ void loop()
   // モータ制御
   if(servoTimer.elapsed()) {
     servoControl();
+    imu.update();
   }
 }

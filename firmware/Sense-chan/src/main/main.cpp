@@ -200,6 +200,9 @@ void setup()
   serialCmd.onCommand = onCommand;
   serialCmd.begin();
 
+  // DYNAMIXELシリアルサーボの初期化 (位置制御)
+  motor.begin();
+  
   // SDカードの初期化と設定読み込み
   if(sdCard.begin()){
     sdCard.load();
@@ -225,9 +228,6 @@ void setup()
   face.setBaseExpression(Expression::Neutral); // Sleepy);
   face.setExpression(Expression::Happy, 2000);
   face.setMicroMotion(true);
-
-  // DYNAMIXELシリアルサーボの初期化 (位置制御)
-  motor.begin();
 
   // バッテリー電圧監視の初期化
   batteryCheck.begin();

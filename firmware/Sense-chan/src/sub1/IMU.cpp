@@ -1,58 +1,53 @@
-#include <Wire.h>
-#include <Adafruit_BNO055.h>
 #include <MP.h>
+#include <Wire.h>
+#include <BMI160Gen.h>
 #include "IMU.h"
 
-// BNO055 デバイス (ID, I2Cアドレス, I2Cバス)
-Adafruit_BNO055 bno = Adafruit_BNO055(-1, 0x28, &Wire);
+#define GYRO_RANGE 2000.0f // ジャイロのレンジ [deg/s]
 
 // 初期化する
 bool IMU::begin()
 {
-  // BNO055を9軸フルフュージョンモードで開始
-  if(!bno.begin(OPERATION_MODE_NDOF))
-  {
-    MPLog("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
-    return false;
-  }
-  MPLog("BNO055 detected!");
-  // Wire.setClock(400000);
+  // 変数の初期化
+  theta = 0.0;
+  calibCnt = -1;
 
-  bno.setExtCrystalUse(true);
+  // BMI160の初期化
+  BMI160.begin(BMI160GenClass::I2C_MODE, 0x69);
+
+  // デバイスIDを取得
+  uint8_t dev_id = BMI160.getDeviceID();
+  MPLog("DEVICE ID: %02X\n", dev_id);
+
+  // ジャイロのレンジを設定
+  BMI160.setGyroRange((int)GYRO_RANGE);
+  MPLog("Initializing IMU device...done.\n");
 
   return true;
 }
 
-// キャリブレーション済みかどうかを返す
-bool IMU::isCalibrated()
+// 更新する
+void IMU::update()
 {
-  uint8_t system, gyro, accel, mag = 0;
-  bno.getCalibration(&system, &gyro, &accel, &mag);
-//return (system == 3 && gyro == 3 && accel == 3 && mag == 3);
-  return (gyro == 3);
-}
+  // ジャイロの値を取得し、deg/sec に変換する
+  int gxRaw, gyRaw, gzRaw;
+  BMI160.readGyro(gxRaw, gyRaw, gzRaw);
+  float g = gzRaw * GYRO_RANGE / 32768.0f;
 
-// 温度を取得する
-int IMU::getTemperature()
-{
-    int8_t temp = bno.getTemp();
-    return temp;
-}
-
-// 方位角を取得する
-float IMU::getHeading()
-{
-  // Possible vector values can be:
-  // - VECTOR_ACCELEROMETER - m/s^2
-  // - VECTOR_MAGNETOMETER  - uT
-  // - VECTOR_GYROSCOPE     - rad/s
-  // - VECTOR_EULER         - degrees
-  // - VECTOR_LINEARACCEL   - m/s^2
-  // - VECTOR_GRAVITY       - m/s^2
-  imu::Vector<3> euler = bno.getVector(Adafruit_BNO055::VECTOR_EULER);
-
-  // BNO055のオイラー角は通常と異なり、X軸がHeading（方位角）に対応
-  float heading = euler.x();
-
-  return heading;
+  // キャリブレーション中でないなら、角速度を積分して方位角を更新する
+  if(calibCnt < 0){
+    g -= g0; // オフセットを引く
+    theta += g * 0.020f; // 累積して方位角を更新
+  }
+  // キャリブレーション中
+  else if(calibCnt < 100){
+    g0 += g;
+    calibCnt++;
+  }
+  // キャリブレーション完了
+  if(calibCnt == 100){
+    g0 /= 100.0f;
+    MPLog("Gyro offset: %.7f\n", g0);
+    calibCnt = -1;
+  }
 }
