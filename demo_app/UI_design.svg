@@ -1,0 +1,452 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="1920"
+   height="1280"
+   viewBox="0 0 508 338.66666"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
+   sodipodi:docname="デモ画面.svg"
+   inkscape:export-filename="Background.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="0.70655435"
+     inkscape:cx="1718.9053"
+     inkscape:cy="541.35963"
+     inkscape:window-width="2880"
+     inkscape:window-height="1514"
+     inkscape:window-x="-11"
+     inkscape:window-y="-11"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1">
+    <clipPath
+       id="clip0">
+      <rect
+         x="630"
+         y="1433"
+         width="132"
+         height="133"
+         id="rect1" />
+    </clipPath>
+    <clipPath
+       id="clip1">
+      <rect
+         x="0"
+         y="0"
+         width="1257300"
+         height="1266825"
+         id="rect2" />
+    </clipPath>
+    <image
+       width="162"
+       height="162"
+       xlink:href="data:image/jpeg;base64,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"
+       preserveAspectRatio="none"
+       id="img2" />
+    <clipPath
+       id="clip3">
+      <rect
+         x="0"
+         y="0"
+         width="1257300"
+         height="1257300"
+         id="rect3" />
+    </clipPath>
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="display:inline;fill:#c5cae9;fill-opacity:1;stroke:none;stroke-width:2;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+       id="rect7"
+       width="508"
+       height="338.66666"
+       x="0"
+       y="0"
+       rx="0"
+       ry="0"
+       inkscape:label="Background" />
+    <rect
+       style="fill:#e8eaf6;fill-opacity:1;stroke:#3949ab;stroke-width:3;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+       id="rect13-7"
+       width="124"
+       height="155.75"
+       x="366.625"
+       y="41.1875"
+       rx="21.39049"
+       ry="21.390495"
+       inkscape:label="StatusBox" />
+    <text
+       xml:space="preserve"
+       style="font-size:19.05px;font-family:Calibri;-inkscape-font-specification:Calibri;text-align:center;text-anchor:middle;fill:#3949ab;stroke-width:0.353131;stroke-linecap:round;paint-order:stroke fill markers;fill-opacity:1"
+       x="254.21704"
+       y="121.83236"
+       id="text1-7"
+       inkscape:label="SubTitle"><tspan
+         sodipodi:role="line"
+         id="tspan1-1"
+         style="font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;font-size:19.05px;font-family:'GenEi M Gothic v2';-inkscape-font-specification:'GenEi M Gothic v2 Heavy';fill:#3949ab;fill-opacity:1;stroke-width:0.353131"
+         x="254.21704"
+         y="121.83236">SPRESENSE搭載の</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;font-size:19.05px;font-family:'GenEi M Gothic v2';-inkscape-font-specification:'GenEi M Gothic v2 Heavy';fill:#3949ab;fill-opacity:1;stroke-width:0.353131"
+         x="254.21704"
+         y="148.11913"
+         id="tspan2-3">ｽﾀｯｸﾁｬﾝ派生ロボット</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:38.1px;font-family:Calibri;-inkscape-font-specification:Calibri;text-align:center;text-anchor:middle;fill:#3949ab;stroke-width:0.353131;stroke-linecap:round;paint-order:stroke fill markers;fill-opacity:1"
+       x="254.01865"
+       y="82.010521"
+       id="text1"
+       inkscape:label="MainTitle"><tspan
+         sodipodi:role="line"
+         id="tspan1"
+         style="font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;font-size:52.9167px;font-family:'GenEi M Gothic v2';-inkscape-font-specification:'GenEi M Gothic v2 Heavy';fill:#3949ab;fill-opacity:1;stroke-width:0.353131"
+         x="254.01865"
+         y="82.010521">ｾﾝｽﾁｬﾝ</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:38.1px;font-family:'GenEi M Gothic v2';-inkscape-font-specification:'GenEi M Gothic v2 Ultra-Bold';fill:#3949ab;stroke-width:0.353131;fill-opacity:1"
+         x="254.01865"
+         y="129.63553"
+         id="tspan2" /></text>
+    <rect
+       style="display:inline;fill:#1565c0;fill-opacity:1;stroke:none;stroke-width:2;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+       id="rect5-3"
+       width="132.29167"
+       height="37.041668"
+       x="187.85417"
+       y="171.97917"
+       rx="18.520834"
+       ry="18.520834"
+       inkscape:label="Button_Connect" />
+    <text
+       xml:space="preserve"
+       style="font-size:19.05px;font-family:Calibri;-inkscape-font-specification:Calibri;text-align:center;text-anchor:middle;display:inline;fill:#ffffff;fill-opacity:1;stroke-width:0.353131;stroke-linecap:round;paint-order:stroke fill markers"
+       x="254.03824"
+       y="197.70576"
+       id="text1-7-5"
+       inkscape:label="Label_Connect"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;font-size:19.05px;font-family:'GenEi M Gothic v2';-inkscape-font-specification:'GenEi M Gothic v2 Heavy';fill:#ffffff;fill-opacity:1;stroke-width:0.353131"
+         x="0"
+         y="0"
+         id="tspan6">CONNECT</tspan></text>
+    <rect
+       style="display:inline;fill:#1565c0;fill-opacity:1;stroke:none;stroke-width:2;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+       id="rect5-3-3-6"
+       width="132.29167"
+       height="37.041668"
+       x="15.875002"
+       y="145.52083"
+       rx="18.520834"
+       ry="18.520834"
+       inkscape:label="Button_Gyro" />
+    <text
+       xml:space="preserve"
+       style="font-size:19.05px;font-family:Calibri;-inkscape-font-specification:Calibri;text-align:center;text-anchor:middle;display:inline;fill:#ffffff;stroke-width:0.353131;stroke-linecap:round;paint-order:stroke fill markers"
+       x="82.059067"
+       y="171.24742"
+       id="text1-7-5-8-7"
+       inkscape:label="Label_Gyro"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;font-size:19.05px;font-family:'GenEi M Gothic v2';-inkscape-font-specification:'GenEi M Gothic v2 Heavy';fill:#ffffff;fill-opacity:1;stroke-width:0.353131"
+         x="0"
+         y="0"
+         id="tspan6-4-7">ジャイロ</tspan></text>
+    <rect
+       style="display:inline;fill:#ff1744;fill-opacity:1;stroke:none;stroke-width:2;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+       id="rect5-3-3-1"
+       width="132.29167"
+       height="37.041668"
+       x="15.875002"
+       y="92.604164"
+       rx="18.520834"
+       ry="18.520834"
+       inkscape:label="Button_Radicon" />
+    <text
+       xml:space="preserve"
+       style="font-size:19.05px;font-family:Calibri;-inkscape-font-specification:Calibri;text-align:center;text-anchor:middle;display:inline;fill:#ffffff;stroke-width:0.353131;stroke-linecap:round;paint-order:stroke fill markers"
+       x="82.059067"
+       y="118.33076"
+       id="text1-7-5-8-2"
+       inkscape:label="Label_Radicon"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;font-size:19.05px;font-family:'GenEi M Gothic v2';-inkscape-font-specification:'GenEi M Gothic v2 Heavy';fill:#ffffff;fill-opacity:1;stroke-width:0.353131"
+         x="0"
+         y="0"
+         id="tspan6-4-1">ラジコン</tspan></text>
+    <rect
+       style="display:inline;fill:#1565c0;fill-opacity:1;stroke:none;stroke-width:2;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+       id="rect5-3-3"
+       width="132.29167"
+       height="37.041668"
+       x="15.874997"
+       y="39.6875"
+       rx="18.520834"
+       ry="18.520834"
+       inkscape:label="Button_Urochoro" />
+    <text
+       xml:space="preserve"
+       style="font-size:19.05px;font-family:Calibri;-inkscape-font-specification:Calibri;text-align:center;text-anchor:middle;display:inline;fill:#ffffff;stroke-width:0.353131;stroke-linecap:round;paint-order:stroke fill markers"
+       x="82.059067"
+       y="65.414093"
+       id="text1-7-5-8"
+       inkscape:label="Label_Urochoro"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;font-size:19.05px;font-family:'GenEi M Gothic v2';-inkscape-font-specification:'GenEi M Gothic v2 Heavy';fill:#ffffff;fill-opacity:1;stroke-width:0.353131"
+         x="0"
+         y="0"
+         id="tspan6-4">うろちょろ</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:14.8167px;font-family:Calibri;-inkscape-font-specification:Calibri;text-align:center;text-anchor:middle;display:inline;fill:#3949ab;fill-opacity:1;stroke-width:0.353131;stroke-linecap:round;paint-order:stroke fill markers"
+       x="425.50278"
+       y="184.19138"
+       id="text1-7-3-1-4-4"
+       inkscape:label="Text_Status"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;font-size:14.8167px;font-family:'GenEi M Gothic v2';-inkscape-font-specification:'GenEi M Gothic v2 Heavy';fill:#3949ab;fill-opacity:1;stroke-width:0.353131"
+         x="0"
+         y="0"
+         id="tspan3-5-3-4-0">Normal</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;font-size:14.8167px;font-family:'GenEi M Gothic v2';-inkscape-font-specification:'GenEi M Gothic v2 Heavy';fill:#3949ab;fill-opacity:1;stroke-width:0.353131"
+         x="0"
+         y="0"
+         id="tspan9-5-1-2" /><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;font-size:14.8167px;font-family:'GenEi M Gothic v2';-inkscape-font-specification:'GenEi M Gothic v2 Heavy';fill:#3949ab;fill-opacity:1;stroke-width:0.353131"
+         x="0"
+         y="0"
+         id="tspan8-5-9-8" /><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:14.8167px;font-family:'GenEi M Gothic v2';-inkscape-font-specification:'GenEi M Gothic v2 Ultra-Bold';fill:#3949ab;fill-opacity:1;stroke-width:0.353131"
+         x="0"
+         y="0"
+         id="tspan2-3-7-9-7-1" /></text>
+    <text
+       xml:space="preserve"
+       style="font-size:14.8167px;font-family:Calibri;-inkscape-font-specification:Calibri;text-align:center;text-anchor:middle;display:inline;fill:#3949ab;fill-opacity:1;stroke-width:0.353131;stroke-linecap:round;paint-order:stroke fill markers"
+       x="414.99796"
+       y="136.01653"
+       id="text1-7-3-1-4"
+       inkscape:label="Text_Battery"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;font-size:14.8167px;font-family:'GenEi M Gothic v2';-inkscape-font-specification:'GenEi M Gothic v2 Heavy';fill:#3949ab;fill-opacity:1;stroke-width:0.353131"
+         x="0"
+         y="0"
+         id="tspan3-5-3-4">4.5V</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;font-size:14.8167px;font-family:'GenEi M Gothic v2';-inkscape-font-specification:'GenEi M Gothic v2 Heavy';fill:#3949ab;fill-opacity:1;stroke-width:0.353131"
+         x="0"
+         y="0"
+         id="tspan9-5-1" /><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;font-size:14.8167px;font-family:'GenEi M Gothic v2';-inkscape-font-specification:'GenEi M Gothic v2 Heavy';fill:#3949ab;fill-opacity:1;stroke-width:0.353131"
+         x="0"
+         y="0"
+         id="tspan8-5-9" /><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:14.8167px;font-family:'GenEi M Gothic v2';-inkscape-font-specification:'GenEi M Gothic v2 Ultra-Bold';fill:#3949ab;fill-opacity:1;stroke-width:0.353131"
+         x="0"
+         y="0"
+         id="tspan2-3-7-9-7" /></text>
+    <text
+       xml:space="preserve"
+       style="font-size:14.8167px;font-family:Calibri;-inkscape-font-specification:Calibri;text-align:center;text-anchor:middle;display:inline;fill:#3949ab;fill-opacity:1;stroke-width:0.353131;stroke-linecap:round;paint-order:stroke fill markers"
+       x="436.74551"
+       y="89.578026"
+       id="text1-7-3-1"
+       inkscape:label="Text_Comm"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;font-size:14.8167px;font-family:'GenEi M Gothic v2';-inkscape-font-specification:'GenEi M Gothic v2 Heavy';fill:#3949ab;fill-opacity:1;stroke-width:0.353131"
+         x="0"
+         y="0"
+         id="tspan3-5-3">No Device</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;font-size:14.8167px;font-family:'GenEi M Gothic v2';-inkscape-font-specification:'GenEi M Gothic v2 Heavy';fill:#3949ab;fill-opacity:1;stroke-width:0.353131"
+         x="0"
+         y="0"
+         id="tspan9-5" /><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;font-size:14.8167px;font-family:'GenEi M Gothic v2';-inkscape-font-specification:'GenEi M Gothic v2 Heavy';fill:#3949ab;fill-opacity:1;stroke-width:0.353131"
+         x="0"
+         y="0"
+         id="tspan8-5" /><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:14.8167px;font-family:'GenEi M Gothic v2';-inkscape-font-specification:'GenEi M Gothic v2 Ultra-Bold';fill:#3949ab;fill-opacity:1;stroke-width:0.353131"
+         x="0"
+         y="0"
+         id="tspan2-3-7-9" /></text>
+    <text
+       xml:space="preserve"
+       style="font-size:14.8167px;font-family:Calibri;-inkscape-font-specification:Calibri;text-align:center;text-anchor:middle;display:inline;fill:#3949ab;fill-opacity:1;stroke-width:0.353131;stroke-linecap:round;paint-order:stroke fill markers"
+       x="404.06015"
+       y="159.84351"
+       id="text1-7-3-8-8"
+       inkscape:label="Label_Status"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;font-size:14.8167px;font-family:'GenEi M Gothic v2';-inkscape-font-specification:'GenEi M Gothic v2 Heavy';fill:#3949ab;fill-opacity:1;stroke-width:0.353131"
+         x="0"
+         y="0"
+         id="tspan3-5-6-5">Status:</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;font-size:14.8167px;font-family:'GenEi M Gothic v2';-inkscape-font-specification:'GenEi M Gothic v2 Heavy';fill:#3949ab;fill-opacity:1;stroke-width:0.353131"
+         x="0"
+         y="0"
+         id="tspan10" /><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;font-size:14.8167px;font-family:'GenEi M Gothic v2';-inkscape-font-specification:'GenEi M Gothic v2 Heavy';fill:#3949ab;fill-opacity:1;stroke-width:0.353131"
+         x="0"
+         y="0"
+         id="tspan9-6-5" /><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;font-size:14.8167px;font-family:'GenEi M Gothic v2';-inkscape-font-specification:'GenEi M Gothic v2 Heavy';fill:#3949ab;fill-opacity:1;stroke-width:0.353131"
+         x="0"
+         y="0"
+         id="tspan8-2-3" /><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:14.8167px;font-family:'GenEi M Gothic v2';-inkscape-font-specification:'GenEi M Gothic v2 Ultra-Bold';fill:#3949ab;fill-opacity:1;stroke-width:0.353131"
+         x="0"
+         y="0"
+         id="tspan2-3-7-3-5" /></text>
+    <text
+       xml:space="preserve"
+       style="font-size:14.8167px;font-family:Calibri;-inkscape-font-specification:Calibri;text-align:center;text-anchor:middle;display:inline;fill:#3949ab;fill-opacity:1;stroke-width:0.353131;stroke-linecap:round;paint-order:stroke fill markers"
+       x="408.34311"
+       y="112.14615"
+       id="text1-7-3-8"
+       inkscape:label="Label_Battery"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;font-size:14.8167px;font-family:'GenEi M Gothic v2';-inkscape-font-specification:'GenEi M Gothic v2 Heavy';fill:#3949ab;fill-opacity:1;stroke-width:0.353131"
+         x="0"
+         y="0"
+         id="tspan3-5-6">Battery:</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;font-size:14.8167px;font-family:'GenEi M Gothic v2';-inkscape-font-specification:'GenEi M Gothic v2 Heavy';fill:#3949ab;fill-opacity:1;stroke-width:0.353131"
+         x="0"
+         y="0"
+         id="tspan9-6" /><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;font-size:14.8167px;font-family:'GenEi M Gothic v2';-inkscape-font-specification:'GenEi M Gothic v2 Heavy';fill:#3949ab;fill-opacity:1;stroke-width:0.353131"
+         x="0"
+         y="0"
+         id="tspan8-2" /><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:14.8167px;font-family:'GenEi M Gothic v2';-inkscape-font-specification:'GenEi M Gothic v2 Ultra-Bold';fill:#3949ab;fill-opacity:1;stroke-width:0.353131"
+         x="0"
+         y="0"
+         id="tspan2-3-7-3" /></text>
+    <text
+       xml:space="preserve"
+       style="font-size:14.8167px;font-family:Calibri;-inkscape-font-specification:Calibri;text-align:center;text-anchor:middle;display:inline;fill:#3949ab;fill-opacity:1;stroke-width:0.353131;stroke-linecap:round;paint-order:stroke fill markers"
+       x="405.15982"
+       y="64.680313"
+       id="text1-7-3"
+       inkscape:label="Label_Comm"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;font-size:14.8167px;font-family:'GenEi M Gothic v2';-inkscape-font-specification:'GenEi M Gothic v2 Heavy';fill:#3949ab;fill-opacity:1;stroke-width:0.353131"
+         x="0"
+         y="0"
+         id="tspan3-5">Comm:</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;font-size:14.8167px;font-family:'GenEi M Gothic v2';-inkscape-font-specification:'GenEi M Gothic v2 Heavy';fill:#3949ab;fill-opacity:1;stroke-width:0.353131"
+         x="0"
+         y="0"
+         id="tspan9" /><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;font-size:14.8167px;font-family:'GenEi M Gothic v2';-inkscape-font-specification:'GenEi M Gothic v2 Heavy';fill:#3949ab;fill-opacity:1;stroke-width:0.353131"
+         x="0"
+         y="0"
+         id="tspan8" /><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:14.8167px;font-family:'GenEi M Gothic v2';-inkscape-font-specification:'GenEi M Gothic v2 Ultra-Bold';fill:#3949ab;fill-opacity:1;stroke-width:0.353131"
+         x="0"
+         y="0"
+         id="tspan2-3-7" /></text>
+    <rect
+       style="fill:#e8eaf6;fill-opacity:1;stroke:#3949ab;stroke-width:3;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+       id="rect13"
+       width="473.25"
+       height="92.25"
+       x="17.375"
+       y="229.04167"
+       rx="21.390488"
+       ry="21.390495"
+       inkscape:label="MessageBox" />
+    <rect
+       style="display:inline;fill:#1565c0;fill-opacity:1;stroke:none;stroke-width:2;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+       id="rect5-3-3-60"
+       width="132.29167"
+       height="37.041668"
+       x="539.065"
+       y="4.5951824"
+       rx="18.520834"
+       ry="18.520834"
+       inkscape:label="Button_Urochoro"
+       inkscape:export-filename=".\rect5-3-3-60.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <rect
+       style="display:inline;fill:#ff1744;fill-opacity:1;stroke:none;stroke-width:2;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+       id="rect5-3-3-1-2"
+       width="132.29167"
+       height="37.041668"
+       x="539.065"
+       y="56.252899"
+       rx="18.520834"
+       ry="18.520834"
+       inkscape:label="Button_Radicon"
+       inkscape:export-filename=".\rect5-3-3-1-2.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <text
+       xml:space="preserve"
+       style="font-size:19.05px;font-family:Calibri;-inkscape-font-specification:Calibri;text-align:center;text-anchor:middle;fill:#3949ab;fill-opacity:1;stroke-width:0.353131;stroke-linecap:round;paint-order:stroke fill markers"
+       x="126.95245"
+       y="267.35318"
+       id="text1-7-2"
+       inkscape:label="SubTitle"><tspan
+         sodipodi:role="line"
+         id="tspan1-1-9"
+         style="font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;font-size:19.05px;font-family:'GenEi M Gothic v2';-inkscape-font-specification:'GenEi M Gothic v2 Heavy';fill:#3949ab;fill-opacity:1;stroke-width:0.353131"
+         x="126.95245"
+         y="267.35318">SPRESENSE搭載の</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;font-size:19.05px;font-family:'GenEi M Gothic v2';-inkscape-font-specification:'GenEi M Gothic v2 Heavy';fill:#3949ab;fill-opacity:1;stroke-width:0.353131"
+         x="126.95245"
+         y="293.63995"
+         id="tspan2-3-1">ｽﾀｯｸﾁｬﾝ派生ロボット</tspan></text>
+    <rect
+       style="display:inline;fill:#7986cb;fill-opacity:1;stroke:none;stroke-width:2;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+       id="rect5-3-2"
+       width="132.29167"
+       height="37.041668"
+       x="540.77838"
+       y="113.77083"
+       rx="18.520834"
+       ry="18.520834"
+       inkscape:label="Button_Connect" />
+  </g>
+</svg>
