@@ -145,16 +145,18 @@ void setup()
   if(!imu.begin()){
     MPLog("IMU: begin error");
     // errorLoop(3);
+  }else{
+    imu.calibrate(); // キャリブレーション開始
   }
-  imu.calibrate(); // キャリブレーション開始
   
   // 初期化完了をメインコアに知らせる
-  uint32_t dummy = 0;
-  MP.Send(MSGID_BEGUN, dummy, MAINCORE_ID);
+  uint32_t status = (imu.isError()) ? 0x0001 : 0x0000;
+  MP.Send(MSGID_BEGUN, status, MAINCORE_ID);
 
   // パラメータ設定
   MP.RecvTimeout(MP_RECV_BLOCKING);
   int8_t msgid;
+  uint32_t dummy = 0;
   struct Parameter{
     float Kx;   // 旋回成分の係数 [度]
     float Ky;   // 並進成分の係数 [度]

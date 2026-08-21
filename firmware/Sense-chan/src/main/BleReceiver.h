@@ -1,4 +1,5 @@
 #pragma once
+#include <stdint.h>
 
 // BLEラジコン受信器
 class BleReceiver
@@ -11,7 +12,7 @@ public:
     void (*onDisconnect)();
     void (*onReceive)(int l, int r);
     void (*onSetMode)(int mode);
-    void sendVoltage(int voltage_mv);
+    void sendStatus(int voltage_mv, uint32_t status);
 
     int RX = 25;   // RXピン番号
     int TX = 26;   // TXピン番号

@@ -179,23 +179,24 @@ void loop()
   // メッセージデータ
   typedef struct {
       int32_t voltage;
-  } S_Voltage;
+      uint32_t status;
+  } S_Status;
 
   typedef union {
-    S_Voltage voltage;
+    S_Status status;
   } MsgData;
   MsgData *msgdata;
-  uint32_t udata;
 
   // メッセージ受信
   int ret = MP.Recv(&msgid, &msgdata);
   switch(ret){
     case MSGID_VOLTAGE:
     {
-      int32_t voltage_mv = msgdata->voltage.voltage;
+      int32_t voltage_mv = msgdata->status.voltage;
+      uint32_t status    = msgdata->status.status;
       
-      static char buff[10];
-      sprintf(buff, "#B%04X$\r\n", voltage_mv);
+      static char buff[16];
+      sprintf(buff, "#B%04X%04X$\r\n", (unsigned int)voltage_mv, (unsigned int)status);
       softSerial->print(buff);
       // MPLog("%s\n", buff);      
       break;

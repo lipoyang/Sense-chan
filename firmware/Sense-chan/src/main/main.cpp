@@ -117,7 +117,7 @@ void onSetMode(int mode)
 void onBatteryCheck(float voltage, bool wasLowBattery)
 {
   Serial.printf("Battery Voltage: %.2f V\n", voltage);
-  receiver.sendVoltage((int)(voltage * 1000.0f));
+  receiver.sendStatus((int)(voltage * 1000.0f), motor.getStatus());
 
   if(voltage < LOW_BATTERY) {
     face.setExpression(Expression::Sad, 2000);

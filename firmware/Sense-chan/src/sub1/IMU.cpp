@@ -16,13 +16,20 @@ bool IMU::begin()
   BMI160.begin(BMI160GenClass::I2C_MODE, 0x69);
 
   // デバイスIDを取得
+  const uint8_t DEV_ID = 0xD1;
   uint8_t dev_id = BMI160.getDeviceID();
   MPLog("DEVICE ID: %02X\n", dev_id);
+  if(dev_id != DEV_ID){
+    MPLog("Gyro Error!\n");
+    _isError = true;
+    return false;
+  }
 
   // ジャイロのレンジを設定
   BMI160.setGyroRange((int)GYRO_RANGE);
   MPLog("Initializing IMU device...done.\n");
 
+  _isError = false;
   return true;
 }
 

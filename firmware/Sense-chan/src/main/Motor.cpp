@@ -25,13 +25,13 @@ void Motor::begin()
     // サブコアの起動完了待ち
     MP.RecvTimeout(MP_RECV_BLOCKING);
     int8_t msgid;
-    uint32_t dummy = 0;
-    MP.Recv(&msgid, &dummy, SUBCORE_MOTOR);
+    MP.Recv(&msgid, &_status, SUBCORE_MOTOR);
     if (msgid != MSGID_BEGUN) {
         Serial.printf("Motor: MP.Recv error: no BEGUN message %d\n", msgid);
     }
 
     // パラメータ設定
+    uint32_t dummy = 0;
     MP.Send(MSGID_SET_PARAMETER, &parameter, SUBCORE_MOTOR);
     MP.Recv(&msgid, &dummy, SUBCORE_MOTOR);
     if (msgid != MSGID_SET_PARAMETER) {

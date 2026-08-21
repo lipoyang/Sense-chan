@@ -1,4 +1,5 @@
 #pragma once
+#include <stdint.h>
 
 // プロポアプリ使用
 //#define USE_PROPO_APP
@@ -22,6 +23,7 @@ public:
     void setPause(bool pause);
     bool isPausing() const {return _pausing;}
     void setMode(int mode);
+    uint32_t getStatus() const {return _status;}
 
     struct Parameter{
         float Kx;   // 旋回成分の係数 [度]
@@ -36,4 +38,5 @@ public:
 
 private:
     bool _pausing = false;
+    uint32_t _status = 0xffff;
 };

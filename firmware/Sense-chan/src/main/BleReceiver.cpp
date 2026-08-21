@@ -110,14 +110,17 @@ void BleReceiver::loop()
     }
 }
 
-// 電源電圧を送信する
+// ステータスを送信する
 // voltage_mv : 電源電圧[mV]
-void BleReceiver::sendVoltage(int voltage_mv)
+// status : ステータス
+void BleReceiver::sendStatus(int voltage_mv, uint32_t status)
 {
     static struct {
         int32_t voltage;
+        uint32_t status;
     } msgdata;
     msgdata.voltage = voltage_mv;
+    msgdata.status = status;
 
     MP.Send(MSGID_VOLTAGE, &msgdata, SUBCORE_BLE);
 }

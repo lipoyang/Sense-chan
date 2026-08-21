@@ -552,8 +552,21 @@ function onReceived(event) {
       const voltage_str = voltage.toFixed(2) + " V";
       const LOW_BATTERY = 3.55;
       const isLowBatt = (voltage < LOW_BATTERY);
-      console.log("str = " + voltage_str);
+      const status = parseInt(text.substring(6, 10), 16) / 1000;
+      let status_str = "";
+      let isError = false;
+      if(status == 0){
+        status_str = "Normal";
+      }else{
+        isError = true;
+        if(status == 0x0001){
+          status_str = "Gyro Err"
+        }else{
+          status_str = "Abnormal"
+        }
+      }
       drawStatusValue(StatusItem.StatusBattery, voltage_str, isLowBatt);
+      drawStatusValue(StatusItem.StatusStatus, status_str, isError);
     }else{
       console.log("unknown command");
     }
