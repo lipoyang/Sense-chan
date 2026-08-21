@@ -88,12 +88,28 @@ void onSetMode(int mode)
 {
   Serial.printf("Set Mode: mode=%d\n", mode);
 
-  // モード設定
-  if(mode == MODE_UROCHORO){
-    face.setMicroMotion(true);
-  }else{
-    face.setMicroMotion(false);
+  switch(mode){
+    case MODE_UROCHORO:
+      face.setMicroMotion(true);
+      face.setBaseExpression(Expression::Neutral);
+      face.setExpression(Expression::Happy, 2000);
+      face.setSpeachText("うろちょろモード！", 2000);
+      break;
+    case MODE_RADIDON:
+      face.setMicroMotion(false);
+      face.setBaseExpression(Expression::Neutral);
+      face.setExpression(Expression::Happy, 2000);
+      face.setSpeachText("ラジコンモード！", 2000);
+      break;
+    case MODE_GYRO:
+      face.setMicroMotion(false);
+      face.setMicroMotion(false);
+      face.setBaseExpression(Expression::Neutral);
+      face.setExpression(Expression::Happy, 2000);
+      face.setSpeachText("ジャイロモード！", 2000);
+      break;
   }
+
   motor.setMode(mode);
 }
 
