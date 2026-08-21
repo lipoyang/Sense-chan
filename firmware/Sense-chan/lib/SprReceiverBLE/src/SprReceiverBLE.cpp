@@ -12,8 +12,9 @@ static bool is_connected = false;   // 接続フラグ
 static uint32_t t_last_recv;        // 最終受信時刻
 static bool is_driving = false;     // 走行中フラグ
 static uint32_t t_last_recv2;       // 走行コマンドの最終受信時刻
-static int st;  // ステアリング値
-static int th;  // スロットル値
+static int st = 0;  // ステアリング値
+static int th = 0;  // スロットル値
+static int mode = 0; // モード値
 
 // 切断チェック
 static void disconnect_check()
@@ -97,6 +98,19 @@ static void onReceived(char* buff)
         }else{
           is_driving = true;
           t_last_recv2 = millis();
+        }
+        break;
+    /* Mコマンド(モード)
+       書式: #Mxx$
+       xx: モード番号
+     */
+    case 'M':
+        // 値の解釈
+        if( HexToUint16(&buff[1], &val, 2) != 0 ) break;
+        mode = (int)((signed char)val);
+        // イベント
+        if(receiver->onSetMode != nullptr){
+          receiver->onSetMode(mode);
         }
         break;
     }

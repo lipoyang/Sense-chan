@@ -1,5 +1,13 @@
 #pragma once
 
+// プロポアプリ使用
+//#define USE_PROPO_APP
+
+// モード
+#define MODE_UROCHORO   0 // うろちょろ
+#define MODE_RADIDON    1 // ラジコン
+#define MODE_GYRO       2 // ジャイロ
+
 // モータの制御
 class Motor
 {
@@ -13,6 +21,7 @@ public:
     void setPosition(float x, float y);
     void setPause(bool pause);
     bool isPausing() const {return _pausing;}
+    void setMode(int mode);
 
     struct Parameter{
         float Kx;   // 旋回成分の係数 [度]

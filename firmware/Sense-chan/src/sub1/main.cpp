@@ -19,6 +19,12 @@ const int8_t MSGID_SET_POSITION_MODE = 4;
 const int8_t MSGID_SET_VELOCITY = 5;
 const int8_t MSGID_SET_POSITION = 6;
 const int8_t MSGID_SET_PAUSE = 7;
+const int8_t MSGID_SET_MODE = 8;
+
+// モード
+#define MODE_UROCHORO   0 // うろちょろ
+#define MODE_RADIDON    1 // ラジコン
+#define MODE_GYRO       2 // ジャイロ
 
 // DYNAMIXEL設定
 #define DXL_SERIAL   Serial2  // シリアルポート
@@ -43,6 +49,7 @@ float Ki = 0.0f;   // PID制御の積分ゲイン
 float Kd = 0.25f;  // PID制御の微分ゲイン
 bool pausing = false; // 一時停止中か？
 float ie = 0.0f; // PID制御の積分値
+int mode = MODE_UROCHORO; // モード
 
 // IMUセンサ関連
 IMU imu;
@@ -67,15 +74,6 @@ void servoControl()
 {
   if(pausing) return; // 一時停止中
 
-  // 方位角の取得
-  float theta = imu.getTheta();
-  float gyro = imu.getGyro();
-  static int cnt = 0;
-
-  //const float k = 81.1f / 57.2f; // 超信地旋回の係数 = 車輪間距離 / 車輪直径
-  //posTarget[0] =  -k * theta;
-  //posTarget[1] =  -k * theta;
-
   // 位置制御モードか？
   if(servoMode == OP_POSITION)
   {
@@ -88,28 +86,32 @@ void servoControl()
       posCurrent[i] += diff;
       dxl.setGoalPosition(id, posOffset[i] + posCurrent[i], UNIT_DEGREE);
     }
+  }
+  // 速度制御モードか？
+  else if(servoMode == OP_VELOCITY)
+  {
+    // ジャイロモードか？
+    if(mode == MODE_GYRO){
+      // 方位角の取得
+      float theta = imu.getTheta();
+      float gyro = imu.getGyro();
+      static int cnt = 0;
 
-    if(++cnt >= 50) {
-      cnt = 0;
-      MPLog("Theta=%.2f, target=%.2f, %.2f, current=%.2f, %.2f, offset=%.2f, %.2f\n",
-        theta, posTarget[0], posTarget[1], posCurrent[0], posCurrent[1], posOffset[0], posOffset[1]);
-    }
+      // 速度制御モード
+      if(theta > 5.0f || theta < -5.0f) {
+        ie = 0.0f; // 積分値をリセット (Anti-windup)
+      }else{
+        ie += theta;
+      }
 
-  }else if(servoMode == OP_VELOCITY) {
-    // 速度制御モード
-    if(theta > 5.0f || theta < -5.0f) {
-      ie = 0.0f; // 積分値をリセット (Anti-windup)
-    }else{
-      ie += theta;
-    }
+      float v =  -Kp * theta - Ki * ie - Kd * gyro;
+      dxl.setGoalVelocity(DXL_ID[0], v, UNIT_PERCENT);
+      dxl.setGoalVelocity(DXL_ID[1], v, UNIT_PERCENT);
 
-    float v =  -Kp * theta - Ki * ie - Kd * gyro;
-    dxl.setGoalVelocity(DXL_ID[0], v, UNIT_PERCENT);
-    dxl.setGoalVelocity(DXL_ID[1], v, UNIT_PERCENT);
-
-    if(++cnt >= 50) {
-      cnt = 0;
-      // MPLog("theta=%.2f, v=%.2f, ie=%.2f, gyro=%.2f\n", theta, v, ie, gyro);
+      if(++cnt >= 50) {
+        cnt = 0;
+        // MPLog("theta=%.2f, v=%.2f, ie=%.2f, gyro=%.2f\n", theta, v, ie, gyro);
+      }
     }
   }
 }
@@ -130,17 +132,14 @@ void setup()
     uint8_t id = DXL_ID[i];
     dxl.ping(id);
     dxl.torqueOff(id);
-    dxl.setOperatingMode(id, OP_VELOCITY); //OP_POSITION); // TODO
-    dxl.setGoalVelocity(id, 0, UNIT_PERCENT); // TODO
-    /* TODO
+    dxl.setOperatingMode(id, OP_POSITION);
     posOffset[i] = dxl.getPresentPosition(id, UNIT_DEGREE);
     posTarget[i] = 0.0f;
     posCurrent[i] = 0.0f;
     dxl.setGoalPosition(id, posOffset[i], UNIT_DEGREE);
-    */
     dxl.torqueOn(id);
   }
-  servoMode = OP_VELOCITY; // TODO OP_POSITION;
+  servoMode = OP_POSITION;
 
   // IMUセンサの初期化
   if(!imu.begin()){
@@ -216,11 +215,16 @@ void loop()
     bool pause;
   } S_Pause;
 
+  typedef struct {
+    int mode;
+  } S_SetMode;
+
   typedef union {
     S_Velocity velocity;
     S_Position position;
     S_Parameter parameter;
     S_Pause pause;
+    S_SetMode mode;
   } MsgData;
   MsgData *msgdata;
 
@@ -277,8 +281,8 @@ void loop()
         // モータの位置制御
         float x = msgdata->position.x;
         float y = msgdata->position.y;
-        // posTarget[0] =  Kx * x + Ky * y; // 左
-        // posTarget[1] = -Kx * x + Ky * y; // 右
+        posTarget[0] =  Kx * x + Ky * y; // 左
+        posTarget[1] = -Kx * x + Ky * y; // 右
       }
       break;
     case MSGID_SET_PAUSE:
@@ -289,9 +293,45 @@ void loop()
           for(uint8_t i = 0; i < 2; i++) {
             uint8_t id = DXL_ID[i];
             posOffset[i] = dxl.getPresentPosition(id, UNIT_DEGREE);
-            // posTarget[i] = 0.0f;
-            // posCurrent[i] = 0.0f;
-            // dxl.setGoalPosition(id, posOffset[i], UNIT_DEGREE);
+            posTarget[i] = 0.0f;
+            posCurrent[i] = 0.0f;
+            dxl.setGoalPosition(id, posOffset[i], UNIT_DEGREE);
+          }
+        }
+      }
+      break;
+    case MSGID_SET_MODE:
+      {
+        int val = msgdata->mode.mode;
+        if(val >= MODE_UROCHORO && val <= MODE_GYRO){
+          if(val != mode){
+            mode = val;
+            MPLog("mode = %d\n", mode);
+
+            if(mode == MODE_UROCHORO){
+              // DYNAMIXELシリアルサーボを位置制御に変更
+              for(uint8_t i = 0; i < 2; i++) {
+                uint8_t id = DXL_ID[i];
+                dxl.torqueOff(id);
+                dxl.setOperatingMode(id, OP_POSITION);
+                posOffset[i] = dxl.getPresentPosition(id, UNIT_DEGREE);
+                posTarget[i] = 0.0f;
+                posCurrent[i] = 0.0f;
+                dxl.setGoalPosition(id, posOffset[i], UNIT_DEGREE);
+                dxl.torqueOn(id);
+              }
+              servoMode = OP_POSITION;
+            }else{
+              // DYNAMIXELシリアルサーボを速度制御に変更
+              for(uint8_t i = 0; i < 2; i++) {
+                uint8_t id = DXL_ID[i];
+                dxl.torqueOff(id);
+                dxl.setGoalVelocity(id, 0, UNIT_PERCENT);
+                dxl.setOperatingMode(id, OP_VELOCITY);
+                dxl.torqueOn(id);
+              }
+              servoMode = OP_VELOCITY;
+            }
           }
         }
       }

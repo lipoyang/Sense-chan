@@ -12,6 +12,7 @@ const int8_t MSGID_SET_POSITION_MODE = 4;
 const int8_t MSGID_SET_VELOCITY = 5;
 const int8_t MSGID_SET_POSITION = 6;
 const int8_t MSGID_SET_PAUSE = 7;
+const int8_t MSGID_SET_MODE = 8;
 
 // 初期化
 void Motor::begin()
@@ -102,4 +103,16 @@ void Motor::setPause(bool pause)
 
     MP.Send(MSGID_SET_PAUSE, &msgdata, SUBCORE_MOTOR);
     _pausing = pause;
+}
+
+// モード設定
+// mode : モード
+void Motor::setMode(int mode)
+{
+    static struct {
+        int mode;
+    } msgdata;
+    msgdata.mode = mode;
+
+    MP.Send(MSGID_SET_MODE, &msgdata, SUBCORE_MOTOR);
 }

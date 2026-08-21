@@ -16,6 +16,7 @@ const int8_t MSGID_BEGUN = 1;
 const int8_t MSGID_CONNECT = 2;
 const int8_t MSGID_DISCONNECT = 3;
 const int8_t MSGID_RECEIVE = 4;
+const int8_t MSGID_SET_MODE = 5;
 
 // ソフトウェアシリアルのピン
 SoftwareSerial *softSerial;
@@ -24,6 +25,7 @@ SoftwareSerial *softSerial;
 SprReceiverBLE receiver;
 static int g_fb = 0;  // 前後方向
 static int g_lr = 0;  // 左右方向
+static int g_mode = 0; // モード
 
 // エラーループ
 void errorLoop(int num)
@@ -41,7 +43,7 @@ void errorLoop(int num)
 }
 
 // プロポメッセージをメインコアへ送る
-void propo_massage()
+void propo_message()
 {
   int32_t l = (int32_t)(g_fb - g_lr/2);
   int32_t r = (int32_t)(g_fb + g_lr/2);
@@ -60,6 +62,18 @@ void propo_massage()
   msgdata.r = r;
 
   MP.Send(MSGID_RECEIVE, &msgdata, MAINCORE_ID);
+}
+
+// モードメッセージをメインコアへ送る
+void mode_message()
+{
+  // メッセージデータ
+  static struct {
+      int32_t mode;
+  } msgdata;
+  msgdata.mode = g_mode;
+
+  MP.Send(MSGID_SET_MODE, &msgdata, MAINCORE_ID);
 }
 
 // 接続時
@@ -81,7 +95,7 @@ void onLost()
 {
   g_fb = 0;
   g_lr = 0;
-  propo_massage();
+  propo_message();
 }
 
 // スロットルコマンド受信時
@@ -89,7 +103,7 @@ void onLost()
 void onTH(int th)
 {
   g_fb = th;
-  propo_massage();
+  propo_message();
 }
 
 // ステアリングコマンド受信時
@@ -97,7 +111,15 @@ void onTH(int th)
 void onST(int st)
 {
   g_lr = st;
-  propo_massage();
+  propo_message();
+}
+
+// モード設定コマンド受信時
+// mode : モード値
+void onSetMode(int mode)
+{
+  g_mode = mode;
+  mode_message();
 }
 
 // 初期化
@@ -136,6 +158,7 @@ void setup()
   receiver.onLost = onLost;
   receiver.onTH = onTH;
   receiver.onST = onST;
+  receiver.onSetMode = onSetMode;
   receiver.begin(*softSerial);
   
   // 設定完了をメインコアに知らせる

@@ -10,6 +10,7 @@ public:
     void (*onConnect)();
     void (*onDisconnect)();
     void (*onReceive)(int l, int r);
+    void (*onSetMode)(int mode);
 
     int RX = 25;   // RXピン番号
     int TX = 26;   // TXピン番号

@@ -13,6 +13,7 @@ public:
     void (*onLost)();
     void (*onST)(int);
     void (*onTH)(int);
+    void (*onSetMode)(int);
 
     uint32_t t_disconnect = 3000;
     uint32_t t_lost = 1000;

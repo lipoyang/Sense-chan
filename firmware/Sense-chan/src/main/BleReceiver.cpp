@@ -10,6 +10,7 @@ const int8_t MSGID_BEGUN = 1;
 const int8_t MSGID_CONNECT = 2;
 const int8_t MSGID_DISCONNECT = 3;
 const int8_t MSGID_RECEIVE = 4;
+const int8_t MSGID_SET_MODE = 5;
 
 // 受信器の初期化
 void BleReceiver::begin()
@@ -58,9 +59,13 @@ void BleReceiver::loop()
         int32_t l;
         int32_t r;
     } S_Receive;
+    typedef struct {
+        int32_t mode;
+    } S_SetMode;
 
     typedef union {
         S_Receive receiveData;
+        S_SetMode setModeData;
     } MsgData;
     MsgData *msgdata;
 
@@ -92,6 +97,12 @@ void BleReceiver::loop()
             );
         }
         break;
+    case MSGID_SET_MODE:
+        if (onSetMode) {
+            onSetMode(
+                msgdata->setModeData.mode
+            );
+        }
     default:
         Serial.printf("BleReceiver: unknown msgid %d\n", msgid);
         break;

@@ -30,6 +30,8 @@ SerialCmd serialCmd;
 void onConnect()
 {
   Serial.println("Connected!");
+
+#ifdef USE_PROPO_APP  
   face.setMicroMotion(false);
   face.setBaseExpression(Expression::Neutral);
   face.setExpression(Expression::Happy, 2000);
@@ -37,12 +39,23 @@ void onConnect()
 
   // DYNAMIXELシリアルサーボを速度制御に変更
   motor.setVelocityMode();
+#else
+  face.setMicroMotion(true);
+  face.setBaseExpression(Expression::Neutral);
+  face.setExpression(Expression::Happy, 2000);
+  face.setSpeachText("アプリと接続したよ", 2000);
+
+  // うろちょろモードに設定
+  motor.setMode(MODE_UROCHORO);
+#endif
 }
 
 // BLEラジコン切断時
 void onDisconnect()
 {
   Serial.println("Disconnected!");
+
+#ifdef USE_PROPO_APP  
   face.setBaseExpression(Expression::Neutral); // Sleepy);
   face.setExpression(Expression::Neutral, 2000);
   face.setSpeachText("プロポ切断したよ", 2000);
@@ -50,6 +63,15 @@ void onDisconnect()
 
   // DYNAMIXELシリアルサーボを位置制御に変更
   motor.setPositionMode();
+#else
+  face.setBaseExpression(Expression::Neutral);
+  face.setExpression(Expression::Neutral, 2000);
+  face.setSpeachText("アプリと切断したよ", 2000);
+  face.setMicroMotion(true);
+
+  // うろちょろモードに設定
+  motor.setMode(MODE_UROCHORO);
+#endif
 }
 
 // BLEラジコン受信時
@@ -59,6 +81,20 @@ void onReceive(int l, int r)
 
   // モータの速度制御
   motor.setVelocity((float)l, (float)r);
+}
+
+// モード設定受信時 (デモアプリ用)
+void onSetMode(int mode)
+{
+  Serial.printf("Set Mode: mode=%d\n", mode);
+
+  // モード設定
+  if(mode == MODE_UROCHORO){
+    face.setMicroMotion(true);
+  }else{
+    face.setMicroMotion(false);
+  }
+  motor.setMode(mode);
 }
 
 // バッテリー電圧監視コールバック
@@ -242,6 +278,7 @@ void setup()
   receiver.onConnect = onConnect;
   receiver.onDisconnect = onDisconnect;
   receiver.onReceive = onReceive;
+  receiver.onSetMode = onSetMode;
   receiver.begin();
 
   // スタックチャンの顔の初期化
