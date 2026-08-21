@@ -188,17 +188,16 @@ void loop()
   uint32_t udata;
 
   // メッセージ受信
-//  int ret = MP.Recv(&msgid, &msgdata);
-  int ret = MP.Recv(&msgid, &udata);
+  int ret = MP.Recv(&msgid, &msgdata);
   switch(ret){
     case MSGID_VOLTAGE:
     {
-      int32_t voltage_mv = udata; //msgdata->voltage.voltage;
+      int32_t voltage_mv = msgdata->voltage.voltage;
       
       static char buff[10];
       sprintf(buff, "#B%04X$\r\n", voltage_mv);
       softSerial->print(buff);
-      MPLog("%s\n", buff);      
+      // MPLog("%s\n", buff);      
       break;
     }
   }

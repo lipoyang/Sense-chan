@@ -114,12 +114,10 @@ void BleReceiver::loop()
 // voltage_mv : 電源電圧[mV]
 void BleReceiver::sendVoltage(int voltage_mv)
 {
-    // メッセージデータ
-    struct {
+    static struct {
         int32_t voltage;
     } msgdata;
     msgdata.voltage = voltage_mv;
-    printf("HOGE 1 %d\n", msgdata.voltage);
-//    MP.Send(MSGID_VOLTAGE, &msgdata, SUBCORE_BLE);
-    MP.Send(MSGID_VOLTAGE, (uint32_t)voltage_mv, SUBCORE_BLE);
+
+    MP.Send(MSGID_VOLTAGE, &msgdata, SUBCORE_BLE);
 }
