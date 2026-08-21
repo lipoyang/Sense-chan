@@ -116,7 +116,8 @@ void onSetMode(int mode)
 // バッテリー電圧監視コールバック
 void onBatteryCheck(float voltage, bool wasLowBattery)
 {
-  //Serial.printf("Battery Voltage: %.2f V\n", voltage);
+  Serial.printf("Battery Voltage: %.2f V\n", voltage);
+  receiver.sendVoltage((int)(voltage * 1000.0f));
 
   if(voltage < LOW_BATTERY) {
     face.setExpression(Expression::Sad, 2000);

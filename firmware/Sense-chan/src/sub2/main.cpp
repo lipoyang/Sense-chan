@@ -17,6 +17,7 @@ const int8_t MSGID_CONNECT = 2;
 const int8_t MSGID_DISCONNECT = 3;
 const int8_t MSGID_RECEIVE = 4;
 const int8_t MSGID_SET_MODE = 5;
+const int8_t MSGID_VOLTAGE = 6;
 
 // ソフトウェアシリアルのピン
 SoftwareSerial *softSerial;
@@ -171,4 +172,34 @@ void loop()
 {
   // BLEラジコン受信器のメインループ処理
   receiver.loop();
+
+  // メッセージID
+  int8_t msgid;
+
+  // メッセージデータ
+  typedef struct {
+      int32_t voltage;
+  } S_Voltage;
+
+  typedef union {
+    S_Voltage voltage;
+  } MsgData;
+  MsgData *msgdata;
+  uint32_t udata;
+
+  // メッセージ受信
+//  int ret = MP.Recv(&msgid, &msgdata);
+  int ret = MP.Recv(&msgid, &udata);
+  switch(ret){
+    case MSGID_VOLTAGE:
+    {
+      int32_t voltage_mv = udata; //msgdata->voltage.voltage;
+      
+      static char buff[10];
+      sprintf(buff, "#B%04X$\r\n", voltage_mv);
+      softSerial->print(buff);
+      MPLog("%s\n", buff);      
+      break;
+    }
+  }
 }

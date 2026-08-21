@@ -545,7 +545,21 @@ function onReceived(event) {
   const value = characteristic.value;
   const decoder = new TextDecoder();
   const text = decoder.decode(value);
-  text_rx.value += text;
+  console.log(text);
+  if(text[0] == "#"){
+    if(text[1] == "B"){
+      const voltage = parseInt(text.substring(2, 6), 16) / 1000;
+      const voltage_str = voltage.toFixed(2) + " V";
+      const LOW_BATTERY = 3.55;
+      const isLowBatt = (voltage < LOW_BATTERY);
+      console.log("str = " + voltage_str);
+      drawStatusValue(StatusItem.StatusBattery, voltage_str, isLowBatt);
+    }else{
+      console.log("unknown command");
+    }
+  }else{
+      console.log("invalid message");
+  }
 }
 
 </script>

@@ -11,6 +11,7 @@ const int8_t MSGID_CONNECT = 2;
 const int8_t MSGID_DISCONNECT = 3;
 const int8_t MSGID_RECEIVE = 4;
 const int8_t MSGID_SET_MODE = 5;
+const int8_t MSGID_VOLTAGE = 6;
 
 // 受信器の初期化
 void BleReceiver::begin()
@@ -107,4 +108,18 @@ void BleReceiver::loop()
         Serial.printf("BleReceiver: unknown msgid %d\n", msgid);
         break;
     }
+}
+
+// 電源電圧を送信する
+// voltage_mv : 電源電圧[mV]
+void BleReceiver::sendVoltage(int voltage_mv)
+{
+    // メッセージデータ
+    struct {
+        int32_t voltage;
+    } msgdata;
+    msgdata.voltage = voltage_mv;
+    printf("HOGE 1 %d\n", msgdata.voltage);
+//    MP.Send(MSGID_VOLTAGE, &msgdata, SUBCORE_BLE);
+    MP.Send(MSGID_VOLTAGE, (uint32_t)voltage_mv, SUBCORE_BLE);
 }
