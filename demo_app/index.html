@@ -424,6 +424,8 @@ let bleDevice = null;
 let chrRX;
 let chrTX;
 
+let keepAliveInterval = null; // 定期送信用タイマー
+
 // BLE接続
 async function connectBLE() {
   try {
@@ -466,6 +468,21 @@ async function connectBLE() {
     drawStatusValue(StatusItem.StatusStatus, "---", false);
     drawMessage(MsgUrochoro);
 
+    // 定期送信タイマー開始
+    if (!keepAliveInterval) {
+      keepAliveInterval = setInterval(async () => {
+        if (chrTX) {
+          const encoder = new TextEncoder();
+          const byteArray = encoder.encode("#K$");
+          try {
+            await chrTX.writeValue(byteArray);
+          } catch (e) {
+            // エラー時は何もしない
+          }
+        }
+      }, 1000); // 1秒ごと
+    }
+
   } catch (error) {
     console.log("ERROR! " + error);
     bleDevice = null;
@@ -505,6 +522,12 @@ function onDisconnected(event) {
   const device = event.target;
   console.log(`Device ${device.name} is disconnected.`);
   bleDevice = null;
+
+  // 定期送信タイマー停止
+  if (keepAliveInterval) {
+    clearInterval(keepAliveInterval);
+    keepAliveInterval = null;
+  }
 
   btState = BLEStatus.Disconnected;
   opMode = OpMode.ModeOffline;
