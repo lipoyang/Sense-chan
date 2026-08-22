@@ -116,7 +116,7 @@ void onSetMode(int mode)
 // バッテリー電圧監視コールバック
 void onBatteryCheck(float voltage, bool wasLowBattery)
 {
-  Serial.printf("Battery Voltage: %.2f V\n", voltage);
+  // Serial.printf("Battery Voltage: %.2f V\n", voltage);
   receiver.sendStatus((int)(voltage * 1000.0f), motor.getStatus());
 
   if(voltage < LOW_BATTERY) {

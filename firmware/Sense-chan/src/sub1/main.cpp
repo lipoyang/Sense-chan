@@ -132,8 +132,10 @@ void setup()
     uint8_t id = DXL_ID[i];
     dxl.ping(id);
     dxl.torqueOff(id);
-    dxl.setOperatingMode(id, OP_POSITION);
+  //dxl.setOperatingMode(id, OP_POSITION);
+    dxl.setOperatingMode(id, OP_EXTENDED_POSITION);
     posOffset[i] = dxl.getPresentPosition(id, UNIT_DEGREE);
+  //MPLog("Offset[%d] = %f\n", i, posOffset[i] );
     posTarget[i] = 0.0f;
     posCurrent[i] = 0.0f;
     dxl.setGoalPosition(id, posOffset[i], UNIT_DEGREE);
@@ -259,8 +261,10 @@ void loop()
       for(uint8_t i = 0; i < 2; i++) {
         uint8_t id = DXL_ID[i];
         dxl.torqueOff(id);
-        dxl.setOperatingMode(id, OP_POSITION);
+      //dxl.setOperatingMode(id, OP_POSITION);
+        dxl.setOperatingMode(id, OP_EXTENDED_POSITION);
         posOffset[i] = dxl.getPresentPosition(id, UNIT_DEGREE);
+      //MPLog("Offset[%d] = %f\n", i, posOffset[i] );
         posTarget[i] = 0.0f;
         posCurrent[i] = 0.0f;
         dxl.setGoalPosition(id, posOffset[i], UNIT_DEGREE);
@@ -315,8 +319,10 @@ void loop()
               for(uint8_t i = 0; i < 2; i++) {
                 uint8_t id = DXL_ID[i];
                 dxl.torqueOff(id);
-                dxl.setOperatingMode(id, OP_POSITION);
+              //dxl.setOperatingMode(id, OP_POSITION);
+                dxl.setOperatingMode(id, OP_EXTENDED_POSITION);
                 posOffset[i] = dxl.getPresentPosition(id, UNIT_DEGREE);
+              //MPLog("Offset[%d] = %f\n", i, posOffset[i] );
                 posTarget[i] = 0.0f;
                 posCurrent[i] = 0.0f;
                 dxl.setGoalPosition(id, posOffset[i], UNIT_DEGREE);

@@ -104,6 +104,7 @@ void BleReceiver::loop()
                 msgdata->setModeData.mode
             );
         }
+        break;
     default:
         Serial.printf("BleReceiver: unknown msgid %d\n", msgid);
         break;
