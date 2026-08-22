@@ -35,6 +35,8 @@
 
 <script>
 
+/********** 共通定数/変数 ***********/
+
 // モード
 const OpMode = {
   ModeUrochoro    : 0,
@@ -58,6 +60,14 @@ const BLEStatus = {
   Connected    : 2
 };
 let btState = BLEStatus.Disconnected;
+
+// 送信コマンドの番号
+const CH = {
+  ST:0,
+  TH:1,
+  MODE: 2,
+  ALL:3
+};
 
 /********** 画面表示 ***********/
 
@@ -327,8 +337,8 @@ async function onClickModeButton(mode)
     drawModeButton(opMode);
     drawMessage(ModeMessages[opMode]);
 
-    const command = "#M" + ("0" + mode.toString(16).toUpperCase()).slice(-2) + "$";
-    sendBLE(command);
+    const command = "#M" + ("0" + mode.toString(16).toUpperCase()).slice(-2) + "$\r\n";
+    sendBLE(CH.MODE, command);
 }
 
 // 接続/切断ボタン
@@ -387,28 +397,28 @@ document.addEventListener("keyup", async (event) => {
 // st = -1.0 ... +1.0
 async function sendST(st)
 {
-  console.log("ST = " +st);
+  // console.log("ST = " +st);
 
   if(btState != BLEStatus.Connected) return;
 
   let bST = Math.floor(st * 127);
   if(bST<0) bST += 256;
-  const command = "#T" + ("0" + bST.toString(16).toUpperCase()).slice(-2) + "$";
-  sendBLE(command);
+  const command = "#T" + ("0" + bST.toString(16).toUpperCase()).slice(-2) + "$\r\n";
+  sendBLE(CH.ST, command);
 }
 
 // スロットルの送信
 // th = -1.0 ... +1.0
 async function sendTH(th)
 {
-  console.log("TH = " +th);
+  // console.log("TH = " +th);
 
   if(btState != BLEStatus.Connected) return;
 
   let bTH = Math.floor(th * 127);
   if(bTH<0) bTH += 256;
-  const command = "#D" + ("0" + bTH.toString(16).toUpperCase()).slice(-2) + "$";
-  sendBLE(command);
+  const command = "#D" + ("0" + bTH.toString(16).toUpperCase()).slice(-2) + "$\r\n";
+  sendBLE(CH.TH, command);
 }
 
 /********** BLE関連 ***********/
@@ -424,7 +434,17 @@ let bleDevice = null;
 let chrRX;
 let chrTX;
 
-let keepAliveInterval = null; // 定期送信用タイマー
+// 定期送信用タイマー
+let keepAliveInterval = null;
+
+// 前回送信時刻
+let last_time = 0;
+// 送信保留タイマ
+let pending_timer = null;
+// 送信保留中のコマンド
+let pendingCommand = Array(CH.ALL).fill("");
+// 送信インターバル[msec]
+const SEND_INTERVAL = 50;
 
 // BLE接続
 async function connectBLE() {
@@ -472,13 +492,7 @@ async function connectBLE() {
     if (!keepAliveInterval) {
       keepAliveInterval = setInterval(async () => {
         if (chrTX) {
-          const encoder = new TextEncoder();
-          const byteArray = encoder.encode("#K$");
-          try {
-            await chrTX.writeValue(byteArray);
-          } catch (e) {
-            // エラー時は何もしない
-          }
+          await sendBLE_NoRetry("#K$\r\n");
         }
       }, 1000); // 1秒ごと
     }
@@ -505,16 +519,72 @@ function disconnectBLE(){
   }
 }
 
-// BLE送信
-async function sendBLE(command)
+// BLE送信サブルーチン (実際に送信する処理)
+async function sendBLE_Sub(command)
 {
+  last_time = performance.now();
   const encoder = new TextEncoder();
   const byteArray = encoder.encode(command);
-  await chrTX.writeValue(byteArray).then(() => {
-    console.log('send:' + command);
+  await chrTX.writeValueWithoutResponse(byteArray).then(() => {
+    // console.log('\u001b[32m' + `send: ${command}` + '\u001b[0m');
   }).catch(()=>{
-    console.log('Error! send:' + command);
+    // console.log('\u001b[31m' + `send ERROR: ${command}` + '\u001b[0m');
   });
+}
+
+// BLE送信リトライ処理
+async function sendBLE_Retry()
+{
+  pending_timer = null;
+  let command = "";
+  for(let i = 0; i < CH.ALL; i++){
+    command += pendingCommand[i];
+    pendingCommand[i] = "";
+  }
+  sendBLE_Sub(command);
+}
+
+// BLE送信
+async function sendBLE(ch, command)
+{
+  // 既に保留中なら送信コマンドのみ更新して今は送信しない
+  if(pending_timer != null){
+    pendingCommand[ch] = command; // 送信保留するコマンド
+    return;
+  }
+  // 最後の送信から送信インターバル未満なら送信を保留する
+  // (送信インターバル経過後の送信を予約する)
+  const now = performance.now();
+  const elapsed = now - last_time;
+  if(elapsed < SEND_INTERVAL){
+    pendingCommand[ch] = command; // 送信保留するコマンド
+    const delay = SEND_INTERVAL - elapsed; // 送信まで待つ時間
+    pending_timer = setTimeout( sendBLE_Retry, delay);
+    return;
+  }
+  // 送信インターバル経過後であれば即送信する
+  else{
+    sendBLE_Sub(command);
+  }
+}
+
+// BLE送信 (送信リトライなし)
+async function sendBLE_NoRetry(command)
+{
+  // 既に保留中なら送信しない
+  if(pending_timer != null){
+    return;
+  }
+  // 最後の送信から送信インターバル未満なら送信しない
+  const now = performance.now();
+  const elapsed = now - last_time;
+  if(elapsed < SEND_INTERVAL){
+    return;
+  }
+  // 送信インターバル経過後であれば即送信する
+  else{
+    sendBLE_Sub(command);
+  }
 }
 
 // 切断時
@@ -545,7 +615,9 @@ function onReceived(event) {
   const value = characteristic.value;
   const decoder = new TextDecoder();
   const text = decoder.decode(value);
-  console.log(text);
+  
+  // console.log(text); // 受信した文字列
+
   if(text[0] == "#"){
     if(text[1] == "B"){
       const voltage = parseInt(text.substring(2, 6), 16) / 1000;
