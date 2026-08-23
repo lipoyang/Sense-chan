@@ -356,35 +356,61 @@ async function onClickConnectButton()
 /********** キーボードイベント ***********/
 document.addEventListener("keydown", async (event) => {
     switch (event.key) {
+        // 矢印キー
         case "ArrowUp":
             console.log("TH 前");
             sendTH(1.0);
             break;
-
         case "ArrowDown":
             console.log("TH 後");
             sendTH(-1.0);
             break;
-
         case "ArrowLeft":
             console.log("ST 左");
             sendST(1.0);
             break;
-
         case "ArrowRight":
             console.log("ST 右");
             sendST(-1.0);
+            break;
+        // C: 接続/切断
+        case "c":
+            console.log("C");
+            if(!event.repeat) {
+              onClickConnectButton();
+            }
+            break;
+        // U: うろちょろ
+        case "u":
+            console.log("U");
+            if(!event.repeat) {
+              onClickModeButton(OpMode.ModeUrochoro);
+            }
+            break;
+        // R: ラジコン
+        case "r":
+            console.log("R");
+            if(!event.repeat) {
+              onClickModeButton(OpMode.ModeModeRadicon);
+            }
+            break;
+        // G: ジャイロ
+        case "g":
+            console.log("G");
+            if(!event.repeat) {
+              onClickModeButton(OpMode.ModeGyro);
+            }
             break;
     }
 });
 document.addEventListener("keyup", async (event) => {
     switch (event.key) {
+        // 矢印キー
         case "ArrowUp":
         case "ArrowDown":
             console.log("TH 停止");
             sendTH(0.0);
             break;
-
         case "ArrowLeft":
         case "ArrowRight":
             console.log("ST 停止");
