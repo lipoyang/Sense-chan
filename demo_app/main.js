@@ -383,24 +383,78 @@ document.addEventListener("keyup", async (event) => {
 });
 
 /********** ゲームパッドイベント ***********/
-//import { GamePad } from "./gamepad.js";
+const GamePadButton = {
+  A : 0,
+  B : 1,
+  X : 2,
+  Y : 3,
+  Up    : 12,
+  Down  : 13,
+  Left  : 14,
+  Right : 15,
+};
 const gamepad = new GamePad(0);
 
 gamepad.addEventListener("pressed", btnDownHandler);
 gamepad.addEventListener("released", btnUpHandler);
 
 function btnDownHandler(event) {
-  console.log("gamepad:" + event.index);
-    switch(event.index) {
-    case 0:
+  //console.log("gamepad down:" + event.index);
+  switch(event.index) {
+    case GamePadButton.A:
+      console.log("R");
+      if(!event.repeat) {
+        onClickModeButton(OpMode.ModeModeRadicon);
+      }
       break;
-    }
+    case GamePadButton.B:
+      console.log("G");
+      if(!event.repeat) {
+        onClickModeButton(OpMode.ModeGyro);
+      }
+      break;
+    case GamePadButton.X:
+      console.log("U");
+      if(!event.repeat) {
+        onClickModeButton(OpMode.ModeUrochoro);
+      }
+      break;
+    case GamePadButton.Y:
+      break;
+    case GamePadButton.Up:
+      console.log("TH 前");
+      sendTH(1.0);
+      break;
+    case GamePadButton.Down:
+      console.log("TH 後");
+      sendTH(-1.0);
+      break;
+    case GamePadButton.Left:
+      console.log("ST 左");
+      sendST(1.0);
+      break;
+    case GamePadButton.Right:
+      console.log("ST 右");
+      sendST(-1.0);
+      break;
+  }
 }
 
 function btnUpHandler(event) {
+  //console.log("gamepad up:" + event.index);
+  switch(event.index) {
+    case GamePadButton.Up:
+    case GamePadButton.Down:
+      console.log("TH 停止");
+      sendTH(0.0);
+      break;
+    case GamePadButton.Left:
+    case GamePadButton.Right:
+      console.log("ST 停止");
+      sendST(0.0);
+      break;
+    }
 }
-
-
 
 // ステアリングの送信
 // st = -1.0 ... +1.0
