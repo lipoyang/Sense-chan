@@ -393,11 +393,12 @@ const GamePadButton = {
   Left  : 14,
   Right : 15,
 };
-const gamepad = new GamePad(0);
+const gamepad = new GamePad();
 
 gamepad.addEventListener("pressed", btnDownHandler);
 gamepad.addEventListener("released", btnUpHandler);
 
+// ボタン押下イベント
 function btnDownHandler(event) {
   //console.log("gamepad down:" + event.index);
   switch(event.index) {
@@ -440,6 +441,7 @@ function btnDownHandler(event) {
   }
 }
 
+// ボタン解放イベント
 function btnUpHandler(event) {
   //console.log("gamepad up:" + event.index);
   switch(event.index) {

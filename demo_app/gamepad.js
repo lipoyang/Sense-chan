@@ -1,5 +1,7 @@
+// ゲームパッド
 class GamePad {
-    constructor(no) {
+    // コンストラクタ
+    constructor() {
         // 十字ボタンのリピート周期[msec]
         this.repeatInterval = 100;
         // 十字ボタン
@@ -17,16 +19,18 @@ class GamePad {
             Y: { button: 3, pressed: false }
         };
 
-        this.no = no;
         this.listener_list = { 'pressed': [], 'released': [] }
 
+        // 更新処理を開始
         requestAnimationFrame((timestamp) => this.update(timestamp));
     }
 
+    // イベントリスナーを追加
     addEventListener(type, listener) {
         this.listener_list[type].push(listener);
     }
 
+    // イベントを通知
     notify_event(type, e) {
         let listeners = this.listener_list[type];
         for (let func of listeners) {
@@ -34,16 +38,20 @@ class GamePad {
         }
     }
 
+    // 更新処理
     update(timestamp) {
         const gamepads = navigator.getGamepads();
-        const pad = gamepads[this.no];
-        //console.log(gamepad);
+        let pad = null;
+        for (const p of gamepads) {
+            if (p?.buttons?.length > 15) {
+                pad = p;
+                break;
+            }
+        }
 
         if (pad) {
 
-            // --------------------
             // 十字キー
-            // --------------------
             for (const [name, state] of Object.entries(this.directions)) {
                 const pressed = pad.buttons[state.button].pressed;
 
@@ -70,9 +78,7 @@ class GamePad {
                 state.pressed = pressed;
             }
 
-            // --------------------
-            // A / B / X / Y
-            // --------------------
+            // A/B/X/Yボタン
             for (const [name, state] of Object.entries(this.buttons)) {
                 const pressed = pad.buttons[state.button].pressed;
 
