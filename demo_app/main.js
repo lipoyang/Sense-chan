@@ -383,16 +383,6 @@ document.addEventListener("keyup", async (event) => {
 });
 
 /********** ゲームパッドイベント ***********/
-const GamePadButton = {
-  A : 0,
-  B : 1,
-  X : 2,
-  Y : 3,
-  Up    : 12,
-  Down  : 13,
-  Left  : 14,
-  Right : 15,
-};
 const gamepad = new GamePad();
 
 gamepad.addEventListener("pressed", btnDownHandler);
@@ -401,40 +391,40 @@ gamepad.addEventListener("released", btnUpHandler);
 // ボタン押下イベント
 function btnDownHandler(event) {
   //console.log("gamepad down:" + event.index);
-  switch(event.index) {
-    case GamePadButton.A:
+  switch(event.button) {
+    case "A":
       console.log("R");
       if(!event.repeat) {
         onClickModeButton(OpMode.ModeModeRadicon);
       }
       break;
-    case GamePadButton.B:
+    case "B":
       console.log("G");
       if(!event.repeat) {
         onClickModeButton(OpMode.ModeGyro);
       }
       break;
-    case GamePadButton.X:
+    case "X":
       console.log("U");
       if(!event.repeat) {
         onClickModeButton(OpMode.ModeUrochoro);
       }
       break;
-    case GamePadButton.Y:
+    case "Y":
       break;
-    case GamePadButton.Up:
+    case "up":
       console.log("TH 前");
       sendTH(1.0);
       break;
-    case GamePadButton.Down:
+    case "down":
       console.log("TH 後");
       sendTH(-1.0);
       break;
-    case GamePadButton.Left:
+    case "left":
       console.log("ST 左");
       sendST(1.0);
       break;
-    case GamePadButton.Right:
+    case "right":
       console.log("ST 右");
       sendST(-1.0);
       break;
@@ -444,14 +434,14 @@ function btnDownHandler(event) {
 // ボタン解放イベント
 function btnUpHandler(event) {
   //console.log("gamepad up:" + event.index);
-  switch(event.index) {
-    case GamePadButton.Up:
-    case GamePadButton.Down:
+  switch(event.button) {
+    case "up":
+    case "down":
       console.log("TH 停止");
       sendTH(0.0);
       break;
-    case GamePadButton.Left:
-    case GamePadButton.Right:
+    case "left":
+    case "right":
       console.log("ST 停止");
       sendST(0.0);
       break;
