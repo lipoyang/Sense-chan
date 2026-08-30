@@ -37,7 +37,7 @@ const CH = {
 const MsgOffline    = ["ｾﾝｽﾁｬﾝとつながっていません。", "「つなげる」ボタンを押してください。"];
 const MsgConnecting = ["ｽﾀｯｸﾁｬﾝに接続中です…"];
 const MsgUrochoro   = ["うろちょろモードで動作中です。", "気まぐれにうろちょろしています。"];
-const MsgRadicon    = ["ラジコンモードで動作中です。", "キーボードの矢印キーで操縦できます。"];
+const MsgRadicon    = ["ラジコンモードで動作中です。", "矢印キーで操縦できます。"];
 const MsgGyro       = ["ジャイロモードで動作中です。", "床が回転しても同じ方向を向き続けます。"];
 const ModeMessages  = [MsgUrochoro, MsgRadicon, MsgGyro, MsgOffline];
 
